@@ -153,6 +153,8 @@ Other models of neurons include:
 --- 
 
 Todo: Information coding 
+In digital images, each pixel is stored as a number which represents the light red, green, and blue light intensity at that point - a higher number indicates greater intensity of light. In digital audio, each timestep is encoded as a number which indicates the strength of the pressure perturbation at that particular time. So how then can an image or audio be passed into a spiking neural network? In other words, how is it turned into spikes? Methods for coding information into spike trains can be classified into two groups - rate coding and temporal coding. A good place to start would be taking inspiration from the brain. Rate coding transfers information in the frequency of spikes at a given moment. Initially it was thought that rate coding was the predominant technique to transmit information within the nervous system [@adrianImpulsesProducedSensory1926], however 
+
 
 ---
 
@@ -219,3 +221,5 @@ Algorithms for training using gradient: SpikeProp, Chronotron, tempetron, Widrow
 
 Other ways to improve accuracy:
 - Using trainable axonal delay 
+- 
+![[neuron_activation_1.png]]
