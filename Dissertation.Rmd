@@ -118,7 +118,7 @@ A graphics processing unit (GPU) running a large language model (LLM) can consum
 
 ![(a) ANN neuron (b) SNN neuron](images/x26xqlra.png){#fig:my-image}
 
-# Spiking neuron model
+# Spiking Neuron Model
 
 The leaky integrate-and-fire (LIF) neuron model is the most widely used for SNNs. simple, fast, and scalable for large networks, though less biologically detailed. Equations (\ref{eqn:lif1}), (\ref{eqn:lif2}), and (\ref{eqn:lif3}) define how LIF neurons behave.
 
@@ -171,12 +171,12 @@ Backpropagation is the most widely used and effective method for training second
 
 This iterative optimization nudges the network toward improved accuracy, ensuring better alignment between predictions and target values over multiple training cycles. The problem with applying this algorithm to SNNs is that spike events are non-differentiable, therefore the gradient network cannot be calculated and the weights cannot be adjusted. So how are SNNs trained?
 
-## ANN-to-SNN conversion
+## ANN-to-SNN Conversion
 
 Due to the popularity of ANNs, literature on training them is quite advanced, so a natural and popular choice for training SNNs has been by converting a trained ANN model into an SNN model. Such ways of training have had good results for some tests, however such a method incurs large computational costs during conversion and is limited by the architecture of ANNs which are less adaptable to dynamic data [@bellecBiologicallyInspiredAlternatives2019]. Thus, to fully harness the benefits of SNNs — from energy efficiency to novel architectures — effective direct training methods are essential. 
 
 
-## Direct training 
+## Direct Training 
 
 There are several approaches to directly training SNNS. 
 ### Local learning rules
@@ -206,20 +206,37 @@ Neuron spike events are sequential
 A novel training algorithm which utilises precise spike gradients to train the network. Eventprop computes gradients in a more efficient manner than BPTT. It reaches SOTA performance while using 4x less memory and running 3x faster. [@nowotnyLossShapingEnhances2025]
 
 
-
-# NOTES:
-
-
-Backpropagation based methods:
-- Alternatives to BPTT include OTTT, SKTT, e-prop.
-- Some biological feasibility to BP since the brain does send error signals. Top down reward system?
-- BP not fully understood, even random feedback captures some of the effectiveness.
-- 
-
-Algorithms for training using gradient: SpikeProp, Chronotron, tempetron, Widrow-Hoff, OSD, SOAN, Slayer, relating to STDP, OTTT.
+Information about the experiments: 
+1) Problem to solve (learning spoken digits.. further details - language etc)
+2) Dataset used: how many datapoints for training, cross-validation, testing etc.
+3) Model description: network size, layers, recurrent/feedforward, neuron model, synapse model etc.
+4) Training process: method used, performance (plots for accuracy vs time for training, cross-val, testing)
 
 
-Other ways to improve accuracy:
-- Using trainable axonal delay 
-- 
-![[neuron_activation_1.png]]
+SNNs have inherent temporal dependence and show promise for efficiently processing time-based data. 
+
+
+# Problem To Solve
+
+Spiking neural networks are inherently time dependent since information is encoded in the timing of spikes. This makes them naturally applicable for temporal tasks - tasks where the data evolves with time. Artificial neural networks can be tweaked to deal with temporal data of unspecified duration by introducing recurrence. Temporal data can come in many forms, for instance stock market information, video, or audio. This contrasts to static datasets where data is a single block and not related to other samples temporally, for instance image classification, pattern recognition, large language models. The efficiency and potential effectiveness of SNNs to process temporal information could be game changing in edge devices such as mobile phones, wearable devices, and remote sensors which have small power budgets. Large language models are revolutionising how we interact with computers, they provide a way humans to interface with machines using natural language. As a result, companies are eagerly integrating LLMs into their products and services - e.g. Siri, Raybans. Speech recognition is therefore a type of temporal data which is highly relevant and potentially game changing. 
+
+# Spiking Heidelberg Digits Dataset
+
+The Spiking Heidelberg Digits (SHD) dataset is a prominent spiking neural network benchmark. The wide use of SHD makes it good for fairly comparing different methods of training models. It is based on the Heidelberg Digits dataset, which is a collection of 10,000 high-quality recordings of spoken digits (0 to 9) in English and German. It is spoken by a relatively representative group of 6 males and 6 females of the ages 21 to 56 years old, with a mean age of 29. The HD dataset was converted into spike trains using a biologically realistic model of the cochlea, outputting 700 channels of spikes. It is a more challenging benchmark than MNIST which is nearing saturation. Moreover it is less computationally intensive than a visual dataset like DVS128 - which has recordings of gestures. 
+
+# Model Description 
+
+The model uses Leaky Integrate-and-Fire neuron model with exponential synapses. It has an input layer of 700 neurons - corresponding to the 700 channels of the cochlea model used by SHD - and 20 output neurons for digits 0 to 9 in English and German. The model has a single hidden layer which has been tested with a size of 64, 128, 256, 512, and 1024. The hidden layer was tested using feed-forward only connections and fully connected recurrent connections, showing best results with a recurrent architecture.
+
+
+# Training Process
+
+The input is provided into the model and it is allowed to develop under neuronal dynamics. The loss is calculated according to Equation (\ref{eqn:lsumexp}). Using the adjoint method the loss is propagated backwards to find out how the timing of each event contributed to the loss so that the weights of the synapses can be adjusted accordingly.  
+
+\begin{equation}
+\mathcal{L}_{sum-exp} = -\frac{1}{N_{batch}} \sum^{N_{bathc}}_{m=1}log(\frac{exp(\int^{T}_{0} e^{-t/T}V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0}e^{-t/T}V^{m}_{k}(t) dt)})
+\label{eqn:lsumexp}
+\end{equation}
+
+This loss was chosen as it deals with the problem highlighted by the Gedanken Experiment. 
+
