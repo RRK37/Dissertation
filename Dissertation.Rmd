@@ -167,9 +167,13 @@ In digital images, each pixel is stored as a number which represents the red, gr
 
 # Training Neural Networks
 
+The objective of training a neural network for spoken word recognition is to develop a model capable of mapping input audio signals to their corresponding word labels. In this context, **supervised learning** is the predominant training paradigm, as it consistently yields state-of-the-art performance in speech recognition tasks [@dengMachineLearningParadigms2013; @hintonDeepNeuralNetworks2012]. Supervised learning relies on labeled data; for spoken word recognition, this typically involves audio recordings paired with their corresponding transcriptions, enabling the model to learn the direct association between acoustic input and linguistic output.
+
 ## Backpropagation
 
-Backpropagation is the most widely used and effective method for training second generation artificial neural networks. Backpropagation is a method for finding the gradient of the "loss" with respect to the networks weights, i.e. how much changing a given weight would increase or decrease the loss. To demonstrate how backpropagation works, let's consider a fully-connected network consisting of a layer of input neurons, hidden neurons, and output neurons. Fully-connected means each neuron in a layer is connected to all neurons in the following layer . 
+
+
+Backpropagation is the most widely used and effective method for training second generation artificial neural networks. It is a method for efficiently finding the gradient of the "loss" with respect to the networks weights, i.e. how much changing a given weight would increase or decrease the loss. This enables gradient descent, a process w To demonstrate how backpropagation works, let's consider a fully-connected network consisting of a layer of input neurons, hidden neurons, and output neurons. Fully-connected means each neuron in a layer is connected to all neurons in the following layer . 
 The input neurons take the values of the input that is presented to the network. 
 
 
