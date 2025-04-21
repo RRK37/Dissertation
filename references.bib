@@ -95,6 +95,55 @@
   keywords = {Algorithms,article,Back propagation networks,Brain,Computation,Data processing,Error signals,Hardware,Machine learning,Neural networks,Neurons,Recurrent neural networks,Spiking,Synapses}
 }
 
+@article{bellecEligibilityTracesProvide,
+  title = {Eligibility Traces Provide a Data-Inspired Alternative to Backpropagation through Time},
+  author = {Bellec, Guillaume and Scherr, Franz and Hajek, Elias and Salaj, Darjan and Subramoney, Anand and Legenstein, Robert and Maass, Wolfgang},
+  abstract = {Learning in recurrent neural networks (RNNs) is most often implemented by gradient descent using backpropagation through time (BPTT), but BPTT does not model accurately how the brain learns. Instead, many experimental results on synaptic plasticity can be summarized as three-factor learning rules involving eligibility traces of the local neural activity and a third factor. We present here eligibility propagation (e-prop), a new factorization of the loss gradients in RNNs that fits the framework of three factor learning rules when derived for biophysical spiking neuron models. When tested on the TIMIT speech recognition benchmark, it is competitive with BPTT both for training artificial LSTM networks and spiking RNNs. Further analysis suggests that the diversity of learning signals and the consideration of slow internal neural dynamics are decisive to the learning efficiency of e-prop.},
+  langid = {english},
+  file = {/home/pomme/Zotero/storage/PV3QFIH8/Bellec et al. - Eligibility traces provide a data-inspired alternative to backpropagation through time.pdf}
+}
+
+@inproceedings{bellecEligibilityTracesProvide2019,
+  title = {Eligibility Traces Provide a Data-Inspired Alternative to Backpropagation through Time},
+  booktitle = {Real {{Neurons}} \{{\textbackslash}\&\} {{Hidden Units}}: {{Future}} Directions at the Intersection of Neuroscience and Artificial Intelligence @ {{NeurIPS}} 2019},
+  author = {Bellec, Guillaume and Scherr, Franz and Hajek, Elias and Salaj, Darjan and Subramoney, Anand and Legenstein, Robert and Maass, Wolfgang},
+  year = {2019},
+  month = oct,
+  urldate = {2025-04-21},
+  abstract = {Learning in recurrent neural networks (RNNs) is most often implemented by gradient descent using backpropagation through time (BPTT), but BPTT does not model accurately how the brain learns. Instead, many experimental results on synaptic plasticity can be summarized as three-factor learning rules involving eligibility traces of the local neural activity and a third factor. We present here eligibility propagation (e-prop), a new factorization of the loss gradients in RNNs that fits the framework of three factor learning rules when derived for biophysical spiking neuron models. When tested on the TIMIT speech recognition benchmark, it is competitive with BPTT both for training artificial LSTM networks and spiking RNNs. Further analysis suggests that the diversity of learning signals and the consideration of slow internal neural dynamics are decisive to the learning efficiency of e-prop.},
+  langid = {english},
+  file = {/home/pomme/Zotero/storage/CFG9J83M/Bellec et al. - 2019 - Eligibility traces provide a data-inspired alternative to backpropagation through time.pdf}
+}
+
+@inproceedings{bellecEligibilityTracesProvide2019a,
+  title = {Eligibility Traces Provide a Data-Inspired Alternative to Backpropagation through Time},
+  booktitle = {Real {{Neurons}} \{{\textbackslash}\&\} {{Hidden Units}}: {{Future}} Directions at the Intersection of Neuroscience and Artificial Intelligence @ {{NeurIPS}} 2019},
+  author = {Bellec, Guillaume and Scherr, Franz and Hajek, Elias and Salaj, Darjan and Subramoney, Anand and Legenstein, Robert and Maass, Wolfgang},
+  year = {2019},
+  month = oct,
+  urldate = {2025-04-21},
+  abstract = {Learning in recurrent neural networks (RNNs) is most often implemented by gradient descent using backpropagation through time (BPTT), but BPTT does not model accurately how the brain learns. Instead, many experimental results on synaptic plasticity can be summarized as three-factor learning rules involving eligibility traces of the local neural activity and a third factor. We present here eligibility propagation (e-prop), a new factorization of the loss gradients in RNNs that fits the framework of three factor learning rules when derived for biophysical spiking neuron models. When tested on the TIMIT speech recognition benchmark, it is competitive with BPTT both for training artificial LSTM networks and spiking RNNs. Further analysis suggests that the diversity of learning signals and the consideration of slow internal neural dynamics are decisive to the learning efficiency of e-prop.},
+  langid = {english},
+  file = {/home/pomme/Zotero/storage/7DXCPYYG/Bellec et al. - 2019 - Eligibility traces provide a data-inspired alternative to backpropagation through time.pdf}
+}
+
+@article{bittarSurrogateGradientSpiking2022,
+  title = {A Surrogate Gradient Spiking Baseline for Speech Command Recognition},
+  author = {Bittar, Alexandre and Garner, Philip N.},
+  year = {2022},
+  month = aug,
+  journal = {Frontiers in Neuroscience},
+  volume = {16},
+  pages = {865897},
+  issn = {1662-4548},
+  doi = {10.3389/fnins.2022.865897},
+  urldate = {2025-04-21},
+  abstract = {Artificial neural networks (ANNs) are the basis of recent advances in artificial intelligence (AI); they typically use real valued neuron responses. By contrast, biological neurons are known to operate using spike trains. In principle, spiking neural networks (SNNs) may have a greater representational capability than ANNs, especially for time series such as speech; however their adoption has been held back by both a lack of stable training algorithms and a lack of compatible baselines. We begin with a fairly thorough review of literature around the conjunction of ANNs and SNNs. Focusing on surrogate gradient approaches, we proceed to define a simple but relevant evaluation based on recent speech command tasks. After evaluating a representative selection of architectures, we show that a combination of adaptation, recurrence and surrogate gradients can yield light spiking architectures that are not only able to compete with ANN solutions, but also retain a high degree of compatibility with them in modern deep learning frameworks. We conclude tangibly that SNNs are appropriate for future research in AI, in particular for speech processing applications, and more speculatively that they may also assist in inference about biological function.},
+  pmcid = {PMC9479696},
+  pmid = {36117617},
+  file = {/home/pomme/Zotero/storage/F7WFI9SZ/Bittar and Garner - 2022 - A surrogate gradient spiking baseline for speech command recognition.pdf}
+}
+
 @article{caoSpikingDeepConvolutional2015,
   title = {Spiking {{Deep Convolutional Neural Networks}} for {{Energy-Efficient Object Recognition}}},
   author = {Cao, Yongqiang and Chen, Yang and Khosla, Deepak},
@@ -110,6 +159,24 @@
   abstract = {Deep-learning neural networks such as convolutional neural network (CNN) have shown great potential as a solution for difficult vision problems, such as object recognition. Spiking neural networks (SNN)-based architectures have shown great potential as a solution for realizing ultra-low power consumption using spike-based neuromorphic hardware. This work describes a novel approach for converting a deep CNN into a SNN that enables mapping CNN to spike-based hardware architectures. Our approach first tailors the CNN architecture to fit the requirements of SNN, then trains the tailored CNN in the same way as one would with CNN, and finally applies the learned network weights to an SNN architecture derived from the tailored CNN. We evaluate the resulting SNN on publicly available Defense Advanced Research Projects Agency (DARPA) Neovision2 Tower and CIFAR-10 datasets and show similar object recognition accuracy as the original CNN. Our SNN implementation is amenable to direct mapping to spike-based neuromorphic hardware, such as the ones being developed under the DARPA SyNAPSE program. Our hardware mapping analysis suggests that SNN implementation on such spike-based hardware is two orders of magnitude more energy-efficient than the original CNN implementation on off-the-shelf FPGA-based hardware.},
   langid = {english},
   keywords = {article,Artificial Intelligence,Convolutional neural networks,Deep learning,Machine learning,Neuromorphic circuits,Object recognition,Spiking neural networks}
+}
+
+@article{chenEssentialCharacteristicsMemristors2023,
+  title = {Essential {{Characteristics}} of {{Memristors}} for {{Neuromorphic Computing}}},
+  author = {Chen, Wenbin and Song, Lekai and Wang, Shengbo and Zhang, Zhiyuan and Wang, Guanyu and Hu, Guohua and Gao, Shuo},
+  year = {2023},
+  journal = {Advanced Electronic Materials},
+  volume = {9},
+  number = {2},
+  pages = {2200833},
+  issn = {2199-160X},
+  doi = {10.1002/aelm.202200833},
+  urldate = {2025-04-21},
+  abstract = {The memristor is a resistive switch where its resistive state is programable based on the applied voltage or current. Memristive devices are thus capable of storing and computing information simultaneously, breaking the Von Neumann bottleneck. Since the first nanomemristor made by Hewlett-Packard in 2008, advances so far have enabled nanostructured, low-power, high-durability devices that exhibit superior performance over conventional CMOS devices. Herein, the development of memristors based on different physical mechanisms is reviewed. In particular, device stability, integration density, power consumption, switching speed, retention, and endurance of memristors, that are crucial for neuromorphic computing, are discussed in detail. An overview of various neural networks with a focus on building a memristor-based spike neural network neuromorphic computing system is then provided. Finally, the existing issues and challenges in implementing such neuromorphic computing systems are analyzed, and an outlook for brain-like computing is proposed.},
+  copyright = {{\copyright} 2022 The Authors. Advanced Electronic Materials published by Wiley-VCH GmbH},
+  langid = {english},
+  keywords = {memristors,neural networks,neuromorphic computing,reliability,variability},
+  file = {/home/pomme/Zotero/storage/6J32K94G/Chen et al. - 2023 - Essential Characteristics of Memristors for Neuromorphic Computing.pdf;/home/pomme/Zotero/storage/VSME96I2/10.1002aelm.html}
 }
 
 @article{dengMachineLearningParadigms2013,
@@ -129,6 +196,13 @@
   copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
   langid = {english},
   file = {/home/pomme/Zotero/storage/I2PAFMPK/Deng and Li - 2013 - Machine Learning Paradigms for Speech Recognition An Overview.pdf}
+}
+
+@misc{EligibilityTracesProvide,
+  title = {Eligibility Traces Provide a Data-Inspired Alternative to Backpropagation through Time {\textbar} {{Franz Scherr}}},
+  urldate = {2025-04-21},
+  howpublished = {https://www.franzscherr.com/publication/eligibility\_traces/},
+  file = {/home/pomme/Zotero/storage/W3ZRHQ7F/eligibility_traces.html}
 }
 
 @inproceedings{fangIncorporatingLearnableMembrane2021,
@@ -308,6 +382,26 @@
   keywords = {news}
 }
 
+@article{liResearchProgressNeural2023,
+  title = {Research {{Progress}} of {{Neural Synapses Based}} on {{Memristors}}},
+  author = {Li, Yamin and Su, Kang and Chen, Haoran and Zou, Xiaofeng and Wang, Changhong and Man, Hongtao and Liu, Kai and Xi, Xin and Li, Tuo},
+  year = {2023},
+  month = jan,
+  journal = {Electronics},
+  volume = {12},
+  number = {15},
+  pages = {3298},
+  publisher = {Multidisciplinary Digital Publishing Institute},
+  issn = {2079-9292},
+  doi = {10.3390/electronics12153298},
+  urldate = {2025-04-21},
+  abstract = {The memristor, characterized by its nano-size, nonvolatility, and continuously adjustable resistance, is a promising candidate for constructing brain-inspired computing. It operates based on ion migration, enabling it to store and retrieve electrical charges. This paper reviews current research on synapses using digital and analog memristors. Synapses based on digital memristors have been utilized to construct positive, zero, and negative weights for artificial neural networks, while synapses based on analog memristors have demonstrated their ability to simulate the essential functions of neural synapses, such as short-term memory (STM), long-term memory (LTM), spike-timing-dependent plasticity (STDP), spike-rate-dependent plasticity (SRDP), and paired-pulse facilitation (PPF). Furthermore, synapses based on analog memristors have shown potential for performing advanced functions such as experiential learning, associative learning, and nonassociative learning. Finally, we highlight some challenges of building large-scale artificial neural networks using memristors.},
+  copyright = {http://creativecommons.org/licenses/by/3.0/},
+  langid = {english},
+  keywords = {analog,artificial neural networks,digital,memristor,synapse},
+  file = {/home/pomme/Zotero/storage/64EGAP9V/Li et al. - 2023 - Research Progress of Neural Synapses Based on Memristors.pdf}
+}
+
 @article{maassComputationalPowerCircuits2004,
   title = {On the Computational Power of Circuits of Spiking Neurons},
   author = {Maass, Wolfgang and Markram, Henry},
@@ -427,6 +521,59 @@
   file = {/home/pomme/Zotero/storage/ELMG7PB2/releases.html}
 }
 
+@article{rostamiEpropSpiNNaker22022,
+  title = {E-Prop on {{SpiNNaker}} 2: {{Exploring}} Online Learning in Spiking {{RNNs}} on Neuromorphic Hardware},
+  shorttitle = {E-Prop on {{SpiNNaker}} 2},
+  author = {Rostami, Amirhossein and Vogginger, Bernhard and Yan, Yexin and Mayr, Christian G.},
+  year = {2022},
+  month = nov,
+  journal = {Frontiers in Neuroscience},
+  volume = {16},
+  publisher = {Frontiers},
+  issn = {1662-453X},
+  doi = {10.3389/fnins.2022.1018006},
+  urldate = {2025-04-21},
+  abstract = {Introduction In recent years, the application of deep learning models at the edge has gained attention. Typically, artificial neural networks (ANNs) are trained on graphics processing units (GPUs) and optimized for efficient execution on edge devices. Training ANNs directly at the edge is the next step with many applications such as the adaptation of models to specific situations like changes in environmental settings or optimization for individuals, e.g., optimization for speakers for speech processing. Also, local training can preserve privacy. Over the last few years, many algorithms have been developed to reduce memory footprint and computation. Methods A specific challenge to train recurrent neural networks (RNNs) for processing sequential data is the need for the Back Propagation Through Time (BPTT) algorithm to store the network state of all time steps. This limitation is resolved by the biologically-inspired E-prop approach for training Spiking Recurrent Neural Networks (SRNNs). We implement the E-prop algorithm on a prototype of the SpiNNaker 2 neuromorphic system. A parallelization strategy is developed to split and train networks on the ARM cores of SpiNNaker 2 to make efficient use of both memory and compute resources. We trained an SRNN from scratch on SpiNNaker 2 in real-time on the Google Speech Command dataset for keyword spotting. Result We achieved an accuracy of 91.12\% while requiring only 680 KB of memory for training the network with 25 K weights. Compared to other spiking neural networks with equal or better accuracy, our work is significantly more memory-efficient. Discussion In addition, we performed a memory and time profiling of the E-prop algorithm. This is used on the one hand to discuss whether E-prop or BPTT is better suited for training a model at the edge and on the other hand to explore architecture modifications to SpiNNaker 2 to speed up online learning. Finally, energy estimations predict that the SRNN can be trained on SpiNNaker2 with 12 times less energy than using a NVIDIA V100 GPU.},
+  langid = {english},
+  keywords = {e-prop,memory footprint,neuromorphic hardware,Online Learning,parallelism,SpiNNaker 2,training at the edge},
+  file = {/home/pomme/Zotero/storage/TT86LFSZ/Rostami et al. - 2022 - E-prop on SpiNNaker 2 Exploring online learning in spiking RNNs on neuromorphic hardware.pdf}
+}
+
+@article{rostamiEpropSpiNNaker22022a,
+  title = {E-Prop on {{SpiNNaker}} 2: {{Exploring}} Online Learning in Spiking {{RNNs}} on Neuromorphic Hardware},
+  shorttitle = {E-Prop on {{SpiNNaker}} 2},
+  author = {Rostami, Amirhossein and Vogginger, Bernhard and Yan, Yexin and Mayr, Christian G.},
+  year = {2022},
+  month = nov,
+  journal = {Frontiers in Neuroscience},
+  volume = {16},
+  pages = {1018006},
+  issn = {1662-4548},
+  doi = {10.3389/fnins.2022.1018006},
+  urldate = {2025-04-21},
+  abstract = {Introduction In recent years, the application of deep learning models at the edge has gained attention. Typically, artificial neural networks (ANNs) are trained on graphics processing units (GPUs) and optimized for efficient execution on edge devices. Training ANNs directly at the edge is the next step with many applications such as the adaptation of models to specific situations like changes in environmental settings or optimization for individuals, e.g., optimization for speakers for speech processing. Also, local training can preserve privacy. Over the last few years, many algorithms have been developed to reduce memory footprint and computation. Methods A specific challenge to train recurrent neural networks (RNNs) for processing sequential data is the need for the Back Propagation Through Time (BPTT) algorithm to store the network state of all time steps. This limitation is resolved by the biologically-inspired E-prop approach for training Spiking Recurrent Neural Networks (SRNNs). We implement the E-prop algorithm on a prototype of the SpiNNaker 2 neuromorphic system. A parallelization strategy is developed to split and train networks on the ARM cores of SpiNNaker 2 to make efficient use of both memory and compute resources. We trained an SRNN from scratch on SpiNNaker 2 in real-time on the Google Speech Command dataset for keyword spotting. Result We achieved an accuracy of 91.12\% while requiring only 680 KB of memory for training the network with 25 K weights. Compared to other spiking neural networks with equal or better accuracy, our work is significantly more memory-efficient. Discussion In addition, we performed a memory and time profiling of the E-prop algorithm. This is used on the one hand to discuss whether E-prop or BPTT is better suited for training a model at the edge and on the other hand to explore architecture modifications to SpiNNaker 2 to speed up online learning. Finally, energy estimations predict that the SRNN can be trained on SpiNNaker2 with 12 times less energy than using a NVIDIA V100 GPU.},
+  pmcid = {PMC9742366},
+  pmid = {36518534},
+  file = {/home/pomme/Zotero/storage/T92K8SA6/Rostami et al. - 2022 - E-prop on SpiNNaker 2 Exploring online learning in spiking RNNs on neuromorphic hardware.pdf}
+}
+
+@inproceedings{sboevSpokenDigitsClassification2024,
+  title = {Spoken {{Digits Classification Using}} a {{Spiking Neural Network}} with {{Fixed Synaptic Weights}}},
+  booktitle = {Biologically {{Inspired Cognitive Architectures}} 2023},
+  author = {Sboev, Alexander and Balykov, Maksim and Kunitsyn, Dmitry and Serenko, Alexey},
+  editor = {Samsonovich, Alexei V. and Liu, Tingting},
+  year = {2024},
+  pages = {767--774},
+  publisher = {Springer Nature Switzerland},
+  address = {Cham},
+  doi = {10.1007/978-3-031-50381-8_83},
+  abstract = {The paper evaluates the applicability of an approach based on the usage of a spiking neural network with synaptic weights fixed from a uniform random distribution to solving audio data classification problems. On the example of the Free Spoken Digits Dataset pronounceable digit classification problem using a linear classifier trained on the output frequencies of spiking neurons as a decoder, an average accuracy of 94\% was obtained. This shows that the proposed spiking neural network performs such a transformation of the audio data that makes it linearly separable. Numerical experiments demonstrated the stability of the algorithm to the parameters of the spike layer, and it was shown that the constants of the threshold potential and the membrane leakage time can be both equal and different for different neurons.},
+  isbn = {978-3-031-50381-8},
+  langid = {english},
+  keywords = {Audio classification,Reservoir computing,Spiking neural networks},
+  file = {/home/pomme/Zotero/storage/G8WKT4BV/Sboev et al. - 2024 - Spoken Digits Classification Using a Spiking Neural Network with Fixed Synaptic Weights.pdf}
+}
+
 @misc{shoesmithEventpropTrainingEfficient2025,
   title = {Eventprop Training for Efficient Neuromorphic Applications},
   author = {Shoesmith, Thomas and Knight, James C. and M{\'e}sz{\'a}ros, Bal{\'a}zs and Timcheck, Jonathan and Nowotny, Thomas},
@@ -442,6 +589,13 @@
   archiveprefix = {arXiv},
   keywords = {Computer Science - Emerging Technologies,Computer Science - Neural and Evolutionary Computing},
   file = {/home/pomme/Zotero/storage/RX2NVHA2/Shoesmith et al. - 2025 - Eventprop training for efficient neuromorphic applications.pdf}
+}
+
+@misc{SingleNeuromorphicMemristor,
+  title = {Single Neuromorphic Memristor Closely Emulates Multiple Synaptic Mechanisms for Energy Efficient Neural Networks {\textbar} {{Nature Communications}}},
+  urldate = {2025-04-21},
+  howpublished = {https://www.nature.com/articles/s41467-024-51093-3},
+  file = {/home/pomme/Zotero/storage/NID6ZER2/s41467-024-51093-3.html}
 }
 
 @misc{SpikingHeidelbergDigits,
@@ -469,6 +623,14 @@
   file = {/home/pomme/Zotero/storage/83SYZ273/citations.html}
 }
 
+@misc{SpokenDigitsClassificationa,
+  title = {Spoken {{Digits Classification Using}} a {{Spiking Neural Network}} with {{Fixed Synaptic Weights}}},
+  urldate = {2025-04-21},
+  howpublished = {http://ouci.dntb.gov.ua/en/works/4NBX0KY4/},
+  langid = {english},
+  file = {/home/pomme/Zotero/storage/QLWYPCSC/4NBX0KY4.html}
+}
+
 @misc{StateAI2025,
   title = {The State of {{AI}} in 2025: {{Global}} Survey {\textbar} {{McKinsey}}},
   urldate = {2025-03-12},
@@ -493,6 +655,31 @@
   file = {/home/pomme/Zotero/storage/9KARM7ZU/Sun et al. - 2023 - Learnable axonal delay in spiking neural networks improves spoken word recognition.pdf}
 }
 
+@mastersthesis{veenIncludingSTDPEligibility2021,
+  title = {Including {{STDP}} to Eligibility Propagation in Multi-Layer Recurrent Spiking Neural Networks},
+  author = {van der Veen, Werner},
+  year = {2021},
+  urldate = {2025-04-21},
+  abstract = {Spiking neural networks (SNNs) in neuromorphic systems are more energy efficient compared to deep learning--based methods, but there is no clear competitive learning algorithm for training such SNNs. Eligibility propagation (e-prop) offers an efficient and biologically plausible way to train competitive recurrent SNNs in low-power neuromorphic hardware. In this report, previous performance of e-prop on a speech classification task is reproduced, and the effects of including STDP-like behavior are analyzed. Including STDP to the ALIF neuron model improves the classification performance, but this is not the case for the Izhikevich e-prop neuron. Finally, it was found that e-prop implemented in a single-layer recurrent SNN consistently outperforms a multi-layer variant.},
+  langid = {english},
+  file = {/home/pomme/Zotero/storage/RMW6DBKS/Veen - 2021 - Including STDP to eligibility propagation in multi-layer recurrent spiking neural networks.pdf;/home/pomme/Zotero/storage/5436HL4Z/24344.html}
+}
+
+@inproceedings{vlasovSpokenDigitsClassification2022,
+  title = {Spoken {{Digits Classification Based}} on {{Spiking Neural Networks}} with {{Memristor-Based STDP}}},
+  booktitle = {2022 {{International Conference}} on {{Computational Science}} and {{Computational Intelligence}} ({{CSCI}})},
+  author = {Vlasov, Danila and Davydov, Yury and Serenko, Alexey and Rybka, Roman and Sboev, Alexander},
+  year = {2022},
+  month = dec,
+  pages = {330--335},
+  issn = {2769-5654},
+  doi = {10.1109/CSCI58124.2022.00066},
+  urldate = {2025-04-21},
+  abstract = {Spiking neural networks are commonly attributed to the third generation of neural networks. They mimic biological neurons more closely by processing information in the form of impulses (spikes) and are characterized by low power consumption and ease of hardware implementation. This paper shows two approaches to the task of classifying audio data represented by the spoken digits dataset using spiking neural networks with memristive plasticity. It is shown that both supervised and unsupervised learning methods based on local plasticity can be successfully used for audio classification. The models achieve accuracies ranging from 80\% to 94\% depending on the network topology, plasticity type and the way of decoding output neuronal activity. The results obtained in the paper can be a step towards creating neuromorhic devices for recognizing audio signals.},
+  keywords = {Decoding,Distance measurement,memristors,Power demand,Scientific computing,Signal processing,Signal processing algorithms,sound classification,spiking neural networks,spoken digits,STDP,Training},
+  file = {/home/pomme/Zotero/storage/ANNJC682/Vlasov et al. - 2022 - Spoken Digits Classification Based on Spiking Neural Networks with Memristor-Based STDP.pdf}
+}
+
 @article{wangLTMDLearningImprovement2022,
   title = {{{LTMD}}: {{Learning Improvement}} of {{Spiking Neural Networks}} with {{Learnable Thresholding Neurons}} and {{Moderate Dropout}}},
   shorttitle = {{{LTMD}}},
@@ -508,6 +695,26 @@
   file = {/home/pomme/Zotero/storage/CVTKQP82/Wang et al. - 2022 - LTMD Learning Improvement of Spiking Neural Networks with Learnable Thresholding Neurons and Modera.pdf}
 }
 
+@article{weilenmannSingleNeuromorphicMemristor2024,
+  title = {Single Neuromorphic Memristor Closely Emulates Multiple Synaptic Mechanisms for Energy Efficient Neural Networks},
+  author = {Weilenmann, Christoph and Ziogas, Alexandros Nikolaos and Zellweger, Till and Portner, Kevin and Mladenovi{\'c}, Marko and Kaniselvan, Manasa and Moraitis, Timoleon and Luisier, Mathieu and Emboras, Alexandros},
+  year = {2024},
+  month = aug,
+  journal = {Nature Communications},
+  volume = {15},
+  number = {1},
+  pages = {6898},
+  publisher = {Nature Publishing Group},
+  issn = {2041-1723},
+  doi = {10.1038/s41467-024-51093-3},
+  urldate = {2025-04-21},
+  abstract = {Biological neural networks do not only include long-term memory and weight multiplication capabilities, as commonly assumed in artificial neural networks, but also more complex functions such as short-term memory, short-term plasticity, and meta-plasticity - all collocated within each synapse. Here, we demonstrate memristive nano-devices based on SrTiO3 that inherently emulate all these synaptic functions. These memristors operate in a non-filamentary, low conductance regime, which enables stable and energy efficient operation. They can act as multi-functional hardware synapses in a class of bio-inspired deep neural networks (DNN) that make use of both long- and short-term synaptic dynamics and are capable of meta-learning or learning-to-learn. The resulting bio-inspired DNN is then trained to play the video game Atari Pong, a complex reinforcement learning task in a dynamic environment. Our analysis shows that the energy consumption of the DNN with multi-functional memristive synapses decreases by about two orders of magnitude as compared to a pure GPU implementation. Based on this finding, we infer that memristive devices with a better emulation of the synaptic functionalities do not only broaden the applicability of neuromorphic computing, but could also improve the performance and energy costs of certain artificial intelligence applications.},
+  copyright = {2024 The Author(s)},
+  langid = {english},
+  keywords = {Electronic devices,Information technology},
+  file = {/home/pomme/Zotero/storage/X6THU2EI/Weilenmann et al. - 2024 - Single neuromorphic memristor closely emulates multiple synaptic mechanisms for energy efficient neu.pdf}
+}
+
 @misc{wolffCowolffSimpleSpikingNeuralNetworkSTDP2025,
   title = {Cowolff/{{Simple-Spiking-Neural-Network-STDP}}},
   author = {Wolff, Cornelius},
@@ -517,6 +724,23 @@
   abstract = {A simple from scratch implementation of a Spiking-Neural-Network with STDP in Python which is beeing trained on MNIST.},
   copyright = {Apache-2.0},
   keywords = {ann,mnist,python,snn,snn-stdp,software}
+}
+
+@article{wuDeepSpikingNeural2020,
+  title = {Deep {{Spiking Neural Networks}} for {{Large Vocabulary Automatic Speech Recognition}}},
+  author = {Wu, Jibin and Y{\i}lmaz, Emre and Zhang, Malu and Li, Haizhou and Tan, Kay Chen},
+  year = {2020},
+  month = mar,
+  journal = {Frontiers in Neuroscience},
+  volume = {14},
+  pages = {199},
+  issn = {1662-4548},
+  doi = {10.3389/fnins.2020.00199},
+  urldate = {2025-04-21},
+  abstract = {Artificial neural networks (ANN) have become the mainstream acoustic modeling technique for large vocabulary automatic speech recognition (ASR). A conventional ANN features a multi-layer architecture that requires massive amounts of computation. The brain-inspired spiking neural networks (SNN) closely mimic the biological neural networks and can operate on low-power neuromorphic hardware with spike-based computation. Motivated by their unprecedented energy-efficiency and rapid information processing capability, we explore the use of SNNs for speech recognition. In this work, we use SNNs for acoustic modeling and evaluate their performance on several large vocabulary recognition scenarios. The experimental results demonstrate competitive ASR accuracies to their ANN counterparts, while require only 10 algorithmic time steps and as low as 0.68 times total synaptic operations to classify each audio frame. Integrating the algorithmic power of deep SNNs with energy-efficient neuromorphic hardware, therefore, offer an attractive solution for ASR applications running locally on mobile and embedded devices.},
+  pmcid = {PMC7090229},
+  pmid = {32256308},
+  file = {/home/pomme/Zotero/storage/IWCP5F27/Wu et al. - 2020 - Deep Spiking Neural Networks for Large Vocabulary Automatic Speech Recognition.pdf}
 }
 
 @misc{xiaoOnlineTrainingTime2022,
