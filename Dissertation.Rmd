@@ -114,9 +114,9 @@ set.seed(973)
 
 Artificial Neural Networks (ANN) are computational models inspired by the brain; made up of layers of interconnected "neurons" which can learn patterns when given large amounts of data. After learning patterns, ANNs can be used to make inferences, predicting an output based on some given input. ANNs have long been used for application ranging from computer vision to financial forecasting. However the use of ANNs has surged recently, increasing fourfold since 2017, driven by the development of generative AI models like ChatGPT [@StateAI2025]. To compound this, models are growing in size and becoming more complex, consequently the global AI power consumption is increasing at an exponential rate [@kindigAIPowerConsumption]. Not only does this make models expensive to operate, but it also raises sustainability concerns. 
 
-A graphics processing unit (GPU) running a large language model (LLM) consumes hundreds of watts of power. On the other hand, the human brain processes sensory information, keeps involuntary biological systems functioning, runs its own language model, and enables conscious thought — all while using only about 20 watts. Such efficient information processing has motivated research into neuromorphic computing - a field aiming to emulate the brain’s neural architecture. Spiking Neural Networks (SNNs) are considered the third generation of neural network models [@maassNetworksSpikingNeurons1997], where ANNs are considered the second generation. Compared to neurons in ANNs, SNN neurons more closely model how biological neurons behave in the brain. For a second generation neuron, the output is a weighted sum of the inputs passed through an activation function (see Figure \@ref(fig:my-image) (a)). For a third generation neuron, the output is a spike, sometimes referred to as an event, which occurs when the voltage of a neuron surpasses a threshold (Figure \@ref(fig:my-image) (b)), this results in neurons communicating with each other via series of spikes, which vary in timing and frequency. Since information is encoded in the timing of outputs, SNNs can inherently capture temporal patterns and dynamic behaviours in sequential data, making them inherently capable at processing tasks involving time-dependent signals, such as speech recognition, sensory processing, and event-based data streams. Moreover, it has been shown that SNNs theoretically posses higher computational power than the previous generation of ANNs [@maassComputationalPowerCircuits2004]. Spiking neurons only activate when necessary, and don't require a clock signal, enabling massive power savings. For instance, the leading neuromorphic platform TrueNorth is capable of simulating a million spiking neurons in real-time while consuming 63 mW. The equivalent network executed on a high-performance computing platform was 100–200× slower than real-time and consumed 100,000 to 300,000× more energy per synaptic event [@merollaMillionSpikingneuronIntegrated2014]. The power savings of SNNs could be game-changing in edge computing devices that run on battery or have limited power budgets - like smartphones or remote environmental sensors. On top of this, their low-latency could benefit autonomous vehicles and robotics. (Benefit of being more explainable?)
+A graphics processing unit (GPU) running a large language model (LLM) consumes hundreds of watts of power. On the other hand, the human brain processes sensory information, keeps involuntary biological systems functioning, runs its own language model, and enables conscious thought — all while using only about 20 watts. Such efficient information processing has motivated research into neuromorphic computing - a field aiming to emulate the brain’s neural architecture. Spiking Neural Networks (SNNs) are considered the third generation of neural network models [@maassNetworksSpikingNeurons1997], where ANNs are considered the second generation. Compared to neurons in ANNs, SNN neurons more closely model how biological neurons behave in the brain. For a second generation neuron, the output is a weighted sum of the inputs passed through an activation function (see Figure \@ref(fig:ann-vs-snn) (a)). For a third generation neuron, the output is a spike, sometimes referred to as an event, which occurs when the voltage of a neuron surpasses a threshold (Figure \@ref(fig:ann-vs-snn) (b)), this results in neurons communicating with each other via series of spikes, which vary in timing and frequency. Since information is encoded in the timing of outputs, SNNs can inherently capture temporal patterns and dynamic behaviours in sequential data, making them inherently capable at processing tasks involving time-dependent signals, such as speech recognition, sensory processing, and event-based data streams. Moreover, it has been shown that SNNs theoretically posses higher computational power than the previous generation of ANNs [@maassComputationalPowerCircuits2004]. Spiking neurons only activate when necessary, and don't require a clock signal, enabling massive power savings. For instance, the leading neuromorphic platform TrueNorth is capable of simulating a million spiking neurons in real-time while consuming 63 mW. The equivalent network executed on a high-performance computing platform was 100–200× slower than real-time and consumed 100,000 to 300,000× more energy per synaptic event [@merollaMillionSpikingneuronIntegrated2014]. The power savings of SNNs could be game-changing in edge computing devices that run on battery or have limited power budgets - like smartphones or remote environmental sensors. On top of this, their low-latency could benefit autonomous vehicles and robotics. 
 
-![(a) ANN neuron (b) SNN neuron](images/ann_vs_snn_neuron_model_diagra.png)
+![(a) ANN neuron (b) SNN neuron](images/ann_vs_snn_neuron_model_diagra.png){#fig:ann-vs-snn}
 
 # Spiking Neuron Model
 
@@ -167,39 +167,80 @@ In digital images, each pixel is stored as a number which represents the red, gr
 
 # Training Neural Networks
 
-The objective of training a neural network for spoken word recognition is to develop a model capable of mapping input audio signals to their corresponding word labels. In this context, **supervised learning** is the predominant training paradigm, as it consistently yields state-of-the-art performance in speech recognition tasks [@dengMachineLearningParadigms2013; @hintonDeepNeuralNetworks2012]. Supervised learning relies on labeled data; for spoken word recognition, this typically involves audio recordings paired with their corresponding transcriptions, enabling the model to learn the direct association between acoustic input and linguistic output.
+The objective of training a neural network for spoken word recognition is to construct a model that accurately maps audio input to the correct lexical output. **Supervised learning** remains the dominant training paradigm in this domain, consistently achieving state-of-the-art results in speech recognition tasks [@dengMachineLearningParadigms2013; @hintonDeepNeuralNetworks2012]. Supervised learning relies on labelled datasets—typically composed of audio clips annotated with their corresponding transcriptions—providing explicit guidance for the model to learn the mapping between acoustic features and linguistic units. In contrast, unsupervised learning operates on unlabelled data, requiring the model to uncover inherent structure or patterns within the input without external annotation. Next I will discuss different ways that neural networks can be trained. 
 
 ## Backpropagation
 
-
-
-Backpropagation is the most widely used and effective method for training second generation artificial neural networks. It is a method for efficiently finding the gradient of the "loss" with respect to the networks weights, i.e. how much changing a given weight would increase or decrease the loss. This enables gradient descent, a process w To demonstrate how backpropagation works, let's consider a fully-connected network consisting of a layer of input neurons, hidden neurons, and output neurons. Fully-connected means each neuron in a layer is connected to all neurons in the following layer . 
-The input neurons take the values of the input that is presented to the network. 
-
-
-
-
-The loss is a way of quantifying how far away the output of the network is from the desired output. A common way to calculate the loss is by calculating the mean squared error (MSE), where you find the sum of the squared differences between the actual output neuron values and the desired output neuron values (Equation (\ref{eqn:loss_mse})).
-
-\begin{equation}
-L= \frac{1}{n} \sum^{n}_{i=1}(y_{i}- \hat{y}_i​)^2
-\label{eqn:loss_mse}
-\end{equation}
-
-
-
-It operates by iteratively adjusting the network's weights to minimize error. 
-
-
-
-The process follows these key steps:
+Backpropagation is the most effective and widely used method for training second generation artificial neural networks. It provides a systematic way to adjust the internal parameters—or weights—of a network to minimize the discrepancy between the network’s predictions and the desired outputs. An overview of the backpropagation process is as follows:
 
 1. **Forward Pass**: The model receives an input and processes it through its layers, generating an output.
 2. **Error Calculation**: The output is compared to the desired target, and a **loss function** quantifies the error.
 3. **Gradient Computation**: The derivative of the loss function is computed with respect to each weight in the network using the **chain rule of calculus**.
 4. **Weight Update**: The weights are adjusted by subtracting a fraction of their corresponding gradient, typically scaled by a learning rate. This step moves the model toward a configuration that reduces error.
 
-This iterative optimization nudges the network toward improved accuracy, ensuring better alignment between predictions and target values over multiple training cycles. The problem with applying this algorithm to SNNs is that spike events are non-differentiable, therefore the gradient network cannot be calculated and the weights cannot be adjusted. So how are SNNs trained?
+In supervised learning, the desired output is the label of the data. When a model predicts an output, the "loss" is calculated to quantify the error between the actual output and the desired output. For instance, a common way to calculate the loss is by calculating the mean squared error (MSE), where you find the sum of the squared differences between the actual output neuron values and the desired output neuron values (Equation (\ref{eqn:loss_mse})).
+
+\begin{equation}
+L= \frac{1}{n} \sum^{n}_{i=1}(y_{i}- \hat{y}_i​)^2
+\label{eqn:loss_mse}
+\end{equation}
+
+To demonstrate how backpropagation works, let's consider this simplified, fully-connected network consisting of a layer of input neurons, hidden neurons, and output neurons (Figure \@ref(fig:ann-vs-snn)). Fully-connected means each neuron in a layer is connected to all neurons in the following layer. 
+
+
+![X is a 3 by N matrix. H is an 6 by N matrix. Y is a 3 by N matrix. N is the batch length. $w_{1}$ and $w_{2}$ are vectors of weights](images/mlp_3_layer.png)
+{#fig:mlp_3_layer}
+
+The highlighted neuron, $h_{1}$, is connected to all input neurons, $x_{1}$, $x_{2}$, and $x_{3}$. This means $h_{1}$ is a weighted sum of the input neurons, $x$ (Equation \ref{eqn:weighted_sum}).  
+
+\begin{equation}
+h_{1} = \sum_{i=1}^{3} x_{i}\times W_{i}^{1}
+\label{eqn:weighted_sum}
+\end{equation}
+
+An efficient way to write these weighted summations for all of the neurons in a layer is by using matrix algebra. 
+
+$$h = x\times W^{'}$$
+$$y = h\times W^{''}$$
+
+The relationship between the equation \ref{eqn:weighted_sum} and the matrix multiplication representation of the network is highlighted in figure \@ref(fig:ann-vs-snn).
+![](images/matrix_of_network.png){#fig:matrix_of_network}
+
+To train the network and adjust the weights, we perform inference on labelled data and calculate the error using a loss function $l()$, such as mean squared error (MSE):
+
+\begin{equation}
+L = l(y, y_{\text{label}})
+\end{equation}
+
+The goal is to minimize this loss by updating the network's weights in the direction of the negative gradient. This requires computing the gradient of the loss with respect to each weight $w_i$:
+
+\begin{equation}
+\frac{\partial L}{\partial w_i}
+\end{equation}
+
+We first calculate the gradient of the layer closest to the output, $W^{''}$.
+
+\begin{equation}
+\frac{\partial L}{\partial W^{''}} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial W^{''}} = \frac{\partial L}{\partial y} \cdot h
+\end{equation}
+
+We then use the chain rule again to calculate the gradient of $L$ with respect to $W^{'}$.
+
+\begin{equation}
+\frac{\partial L}{\partial W^{'}} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial h} \cdot \frac{\partial h}{\partial W^{'}} = \frac{\partial L}{\partial y} \cdot W^{''} \cdot x
+\end{equation}
+
+This step-by-step application of the chain rule allows the error to be propagated backward through the network, enabling efficient computation of gradients at each layer—this is the essence of **backpropagation**.
+
+Once the gradients are known, the weights are updated using the gradient descent rule:
+
+\begin{equation}
+w_i \leftarrow w_i - \eta \frac{\partial L}{\partial w_i}
+\end{equation}
+
+where $\eta$ is the learning rate. Repeating this process across many training examples allows the network to gradually learn the desired input-output mapping.
+
+	This iterative optimization nudges the network toward improved accuracy, ensuring better alignment between predictions and target values over multiple training cycles. The problem with applying this algorithm to SNNs is that spike events are non-differentiable, therefore the gradient network cannot be calculated and the weights cannot be adjusted. So how are SNNs trained?
 
 ## ANN-to-SNN Conversion
 
