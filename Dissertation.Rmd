@@ -1,21 +1,22 @@
 ---
-title: "Exploring training spiking neural network training methods for temporal data"
+title: Training neuromorphic neural networks for speech recognition and Bayesian optimisation of network hyperparameters
 author:
-  - name: "Richard klotiņš"
+  - name: Rihards klotiņš
   - name: "Supervisor: Dorian Florescu"
-abstract: >
-  Filler abstract - Spiking Neural Networks (SNNs), the third generation of neural networks, offer a promising alternative to traditional Artificial Neural Networks (ANNs) due to their energy efficiency, temporal processing capabilities, and potential for neuromorphic hardware implementation. Unlike ANNs, which rely on continuous-valued activations, SNNs process information through discrete spike events, closely mimicking biological neural systems. This characteristic enables them to efficiently handle sequential data, making them suitable for applications such as speech recognition, event-based vision, and edge computing. Training SNNs, however, remains a significant challenge due to the non-differentiability of spike events. While ANN-to-SNN conversion provides a workaround, it imposes computational costs and limits architectural flexibility. Direct training methods, such as Backpropagation-Through-Time (BPTT) with surrogate gradients, local learning rules, and biologically inspired approaches like e-prop and EventProp, have emerged as viable alternatives. Each method presents trade-offs in terms of computational complexity, biological plausibility, and performance. Notably, EventProp has demonstrated state-of-the-art results while reducing memory and computational overhead compared to BPTT. This work explores the theoretical advantages of SNNs, their energy-efficient processing, and recent advancements in training methodologies. It also highlights their potential impact on low-power computing applications, particularly in audio processing, where temporal encoding is crucial. By addressing current limitations and leveraging novel training strategies, SNNs could play a pivotal role in next-generation AI systems.
+abstract: Filler abstract - Spiking Neural Networks (SNNs), the third generation of neural networks, offer a promising alternative to traditional Artificial Neural Networks (ANNs) due to their energy efficiency, temporal processing capabilities, and potential for neuromorphic hardware implementation. Unlike ANNs, which rely on continuous-valued activations, SNNs process information through discrete spike events, closely mimicking biological neural systems. This characteristic enables them to efficiently handle sequential data, making them suitable for applications such as speech recognition, event-based vision, and edge computing. Training SNNs, however, remains a significant challenge due to the non-differentiability of spike events. While ANN-to-SNN conversion provides a workaround, it imposes computational costs and limits architectural flexibility. Direct training methods, such as Backpropagation-Through-Time (BPTT) with surrogate gradients, local learning rules, and biologically inspired approaches like e-prop and EventProp, have emerged as viable alternatives. Each method presents trade-offs in terms of computational complexity, biological plausibility, and performance. Notably, EventProp has demonstrated state-of-the-art results while reducing memory and computational overhead compared to BPTT. This work explores the theoretical advantages of SNNs, their energy-efficient processing, and recent advancements in training methodologies. It also highlights their potential impact on low-power computing applications, particularly in audio processing, where temporal encoding is crucial. By addressing current limitations and leveraging novel training strategies, SNNs could play a pivotal role in next-generation AI systems.
 date: "`r format(Sys.time(), '%d %B %Y')`"
 url: https://GitHubID.github.io/Repository/
 github-repo: GitHubID/Repository
 lang: en-US
-otherlangs: [fr-FR,it]
+otherlangs:
+  - fr-FR
+  - it
 bibliography: references.bib
 biblio-style: IEEEtran
-preamble: >
+preamble: |
   \hyphenation{bio-di-ver-si-ty sap-lings}
 pdftoc: false
-toc-depth: 3
+toc-depth: 1
 urlcolor: blue
 always_allow_html: yes
 csquotes: true
@@ -30,7 +31,7 @@ output:
     lightbox: yes
   bookdown::gitbook:
     config:
-      download: "pdf"
+      download: pdf
       sharing:
         github: yes
   bookdown::html_document2:
@@ -188,8 +189,7 @@ L= \frac{1}{n} \sum^{n}_{i=1}(y_{i}- \hat{y}_i​)^2
 To demonstrate how backpropagation works, let's consider this simplified, fully-connected network consisting of a layer of input neurons, hidden neurons, and output neurons (Figure \@ref(fig:ann-vs-snn)). Fully-connected means each neuron in a layer is connected to all neurons in the following layer. 
 
 
-![X is a 3 by N matrix. H is an 6 by N matrix. Y is a 3 by N matrix. N is the batch length. $w_{1}$ and $w_{2}$ are vectors of weights](images/mlp_3_layer.png)
-{#fig:mlp_3_layer}
+![X is a 3 by N matrix. H is an 6 by N matrix. Y is a 3 by N matrix. N is the batch length. $w_{1}$ and $w_{2}$ are vectors of weights](images/mlp_3_layer.png){#fig:mlp_3_layer fig-align=center}
 
 The highlighted neuron, $h_{1}$, is connected to all input neurons, $x_{1}$, $x_{2}$, and $x_{3}$. This means $h_{1}$ is a weighted sum of the input neurons, $x$ (Equation \ref{eqn:weighted_sum}).  
 
@@ -204,7 +204,8 @@ $$h = x\times W^{'}$$
 $$y = h\times W^{''}$$
 
 The relationship between the equation \ref{eqn:weighted_sum} and the matrix multiplication representation of the network is highlighted in figure \@ref(fig:ann-vs-snn).
-![](images/matrix_of_network.png){#fig:matrix_of_network}
+
+![Matrix multiplication visualisation. ](images/matrix_of_network.png){#fig:matrix_of_network fig-align=center}
 
 To train the network and adjust the weights, we perform inference on labelled data and calculate the error using a loss function $l()$, such as mean squared error (MSE):
 
@@ -240,7 +241,7 @@ w_i \leftarrow w_i - \eta \frac{\partial L}{\partial w_i}
 
 where $\eta$ is the learning rate. Repeating this process across many training examples allows the network to gradually learn the desired input-output mapping.
 
-	This iterative optimization nudges the network toward improved accuracy, ensuring better alignment between predictions and target values over multiple training cycles. The problem with applying this algorithm to SNNs is that spike events are non-differentiable, therefore the gradient network cannot be calculated and the weights cannot be adjusted. So how are SNNs trained?
+This iterative optimization nudges the network toward improved accuracy, ensuring better alignment between predictions and target values over multiple training cycles. The problem with applying this algorithm to SNNs is that spike events are non-differentiable, therefore the gradient network cannot be calculated and the weights cannot be adjusted. So how are SNNs trained?
 
 ## ANN-to-SNN Conversion
 
