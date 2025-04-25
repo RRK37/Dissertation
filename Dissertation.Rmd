@@ -124,14 +124,63 @@ A graphics processing unit (GPU) running a large language model (LLM) consumes h
 
 ## Hodgkin–Huxley
 
-The Hodgkin-Huxley neuron model developed in 1952 by Alan Hodgkin and Andrew Huxley, was the first to quantitatively explain how neurons generate and propagate electrical impulses, or action potentials, by describing the flow of sodium and potassium ions through voltage-gated channels.
+The Hodgkin-Huxley is a detailed neuron model developed in 1952 by Alan Hodgkin and Andrew Huxley, was the first to quantitatively explain how neurons generate and propagate electrical impulses by describing the flow of sodium and potassium ions through voltage-gated channels. Its success in reproducing the full waveform of electrical impulses — including rapid depolarization, repolarization, and refractory behavior — earned Hodgkin and Huxley the 1963 Nobel Prize in Physiology or Medicine. Due to the robustness and biophysical accuracy of this model it is a logical model to consider when looking to implement biologically inspired learning computationally. 
+
+A neuron is enclosed in a cell membrane, with gates for ion flow. We will consider positively charged potassium (K+) and sodium (Na+) ions as they are considered as the primary contributors to the electrical behaviour of neurons. The neuron membrane has channels which allow ions to flow between the inside and the outside of the neuron; these channels are selective, allowing only specific ions to pass through, e.g. only allowing Na+ to flow. The amount of flow they allow depends on the membrane voltage Vm, which is the measure of voltage difference between the inside and outside of the neuron. Two factors govern the tendency of ions to flow from one area to the other - i.e. from inside to outside - diffusion and electric charge. Diffusion is the tendency of ions to flow from areas of high concentrations to low concentrations; in figure \@ref(fig:membrane_diagram) Na+ ions will tend to flow to the extracellular side of the membrane as the concentration of Na+ ions is lower there. Particles which have the same electric charge repel, particles with opposite electrical charges attract. Therefore, Na+ ions will be attracted towards the intracellular side of the membrane due to the inside of the neuron having a negative electric charge. The directions of these opposing forces are displayed in figure \@ref(fig:membrane_diagram). Naturally the cell reaches an equilibrium where the diffusion and electric charge forces are equal. When an external current is applied to the system, the equilibrium is lost and the system experiences transient behaviour defined by the mathematics of the Hodgkin–Huxley model.  
+
+
+![Diagram of neuron membrane](images/membrane_diagram.png){#fig:membrane_diagram fig-align=center}
+
+
+The cell membrane acts as a dielectric separating two charged mediums, in other words it acts as a capacitor. According to the capacitor current-voltage equation, we know that $C \frac{dV}{dt} = I$. Applying this to the context of the neuron membrane, we get equation (\ref{eqn:lif3}). Where $V_m$ is the potential difference across the cell membrane, $C_m$ is a constant representing the characteristic capacitance of the cell membrane, $I_{Na}$ and $I_K$ are the net charge flows of sodium and potassium ions respectively, $I_L$ is the leakage current caused by the movement of other ions, and $I_{ext}$ is the external current applied to the neuron. So we see that the sum of currents causes the voltage to change. 
+
+\begin{equation}
+$$C_{m}\frac{dV_{m}}{dt} = -(I_{Na} + I_{K} + I_{L} - I_{ext})$$
+\label{eqn:hh1}
+\end{equation}
+
+The currents - $I_{Na}$, $I_K$, and $I_{L}$ - are determined by equations (\ref{eqn:hh2}), (\ref{eqn:hh3}) and (\ref{eqn:hh4}). They can be examined like the classic $I =V/R=Vg$ equation ($g$ being conductance). Where the left hand side is the current, the part in the brackets is the voltage, and the part outside the brackets is the conductance of the gates which the ions flow through.  
+
+\begin{equation}
+$$I_{Na} = \bar{g}_{Na} m^{3}h(Vm-E_{Na})$$
+\label{eqn:hh2}
+\end{equation}
+
+\begin{equation}
+$$I_{K} = \bar{g}_{K} n^{4} (Vm - E_{K})$$
+\label{eqn:hh3}
+\end{equation}
+
+\begin{equation}
+$$I_{L} = \bar{g}_{L}(Vm - E_{L})$$
+\label{eqn:hh4}
+\end{equation}
+
+As discussed before, when there is an imbalance in the force of *electric attraction* and *diffusion*, there is a *net flow of ions*, i.e. a current. This represented in equation (\ref{eqn:hh2}) by the term $(Vm-E_{Na})$. Where $E_{Na}$ is the equilibrium potential due to diffusion forces. When the two variables are in balance their difference is $0$, thus the current is also zero. The same also applies for equations (\ref{eqn:hh3}) and (\ref{eqn:hh4}). 
+
+As per (\ref{eqn:hh2}) the current also depends on the *conductance* of the channels which the ions move through. There are specialised channels for Na+ ions and for K+ ions, which have different conductances. The conductance of sodium channels is given by $\bar{g}_{Na} m^{3}h$. The $\bar{g}_{Na}$ term is the conductance of the channel when it is fully open, i.e. the channels maximum conductance. The $m^3h$ term is the probability - 0 to 1 - that a sodium channel is open. This probability comes from the fact that each channel has 3 "m" gates and 1 "h" gate, ions can only flow through the channel when all gates are open. Due to the large number of channels in a neuron, the value of the probability will correspond to what proportion of the channels are open. The probabilities of $m,\ h,\ n$ are given by equation (\ref{eqn:hh5}), where $\alpha _x$ and $\beta _x$ are rate constants at which speed the gates open and close respectively, they are voltage dependent.
+
+\begin{equation}
+$$\frac{dx}{dt} = \alpha _{x}(V_{m})(1-x) - \beta _x (V_m)(x), \ where \ x \in \{m,h,n\}$$
+\label{eqn:hh5}
+\end{equation}
+
+Such simple first order ion flow equations characterise to high accuracy how the neurons in our brain function. Figures \@ref(fig:response_of_hh_1), \@ref(fig:response_of_hh_15), and \@ref(fig:response_of_hh_2) show how a neuron would react to a 5ms, 15ms, and 20ms pulse of current. While the HH neuron model has propelled our understanding of neurons due to it's biophysical precision, it's complexity - with its nonlinear differential equations and multiple gating variables - makes it computationally expensive to simulate. As a result researchers had to look elsewhere to find a model that could be used for training machines to think like humans.
+
+
+![Response of the HH model to a 40ms step function](images/response_of_hh_1_spike.png){#fig:response_of_hh_1 fig-align=center}
+
+![Response of the HH model to a 40ms step function](images/response_of_hh_1.5_spike.png){#fig:response_of_hh_15 fig-align=center}
+
+![Response of the HH model to a 40ms step function](images/response_of_hh_2_spike.png){#fig:response_of_hh_2 fig-align=center}
 
 
 ## Leaky Integrate-and-Fire Neuron
 
-The leaky integrate-and-fire (LIF) neuron model is the most widely used neuronal model in SNNs due to its simplicity and efficiency which helps it scale for larger networks. Simply put, the neuron receives spikes from "pre-synaptic" neurons (figure \@ref(fig:ann-vs-snn) (b)) - these are neurons which feed into the neuron in question; these spikes increase the "membrane potential" of the neuron - which is the voltage between the inside and outside of the neuron. When the membrane potential reaches a threshold voltage, the neuron in question fires a spike to the neurons that it is connected to, and it's membrane voltage resets to a baseline value. 
+The leaky integrate-and-fire (LIF) neuron model is the most widely used neuronal model in SNNs due to its simplicity and efficiency which helps it scale for large networks. Simply put, the neuron receives spikes from "pre-synaptic" neurons (figure \@ref(fig:ann-vs-snn) (b)) - these are neurons which feed into the neuron in question; these spikes increase the "membrane potential" of the neuron - which is the voltage between the inside and outside of the neuron. When the membrane potential reaches a threshold voltage, the neuron in question fires a spike to the neurons that it is connected to, and it's membrane voltage resets to a baseline value. 
 
 In order to be modelled computationally, this behaviour is expressed in mathematical terms. Spikes received by a neuron at time $t$ induce a current $X[t]$. This input current increases the membrane potential, $V[t]$, which is the voltage between the inside of the neuron and the outside. The voltage slowly decays over time, the speed of the decay depends on the membrane time constant, $\tau$. This is the "Leaky Integrate" aspect of the neuron; $X[t]$ is integrated to give $V[t]$ at the same time as $V[t]$ leaks voltage. The neuron leaks voltage till it reaches it's baseline voltage level, $V_{reset}$. This behaviour can be seen in equation (\ref{eqn:lif1}), $H[t]$ is equal equation (\ref{eqn:lif1})to $V[t]$, unless a spike occurs during $t$. This spiking logic is defined in equation (\ref{eqn:lif2}), where $\Theta(x)$ is a function that is $0$ unless $x\geq0$. In other words this function becomes 1 only when the threshold voltage $V_{th}$ is reached. When the threshold voltage is reached, $V[t]$ is set to $V_{reset}$ and a spike is released; if the threshold voltage is not reached then $V[t] = H[t]$. The membrane potential behaviour at spike time is defined in equation (\ref{eqn:lif3}).
+
 
 \begin{equation}
 H[t] = V[t-1] +\frac{1}{\tau}(X[t]-(V[t-1]-V_{reset})),
@@ -150,20 +199,41 @@ V[t]=H[t](1-S[t])+V_{reset}S[t]
 
 ## Izhikevich
 
-efficiently reproduces diverse spiking patterns with low computational cost
+Building on the simplicity of the leaky integrate-and-fire (LIF) neuron, which uses a single differential equation and a fixed threshold to generate spikes, the Izhikevich model strikes a balance between biological realism and computational efficiency [@izhikevichSimpleModelSpiking2003]. Eugene Izhikevich observed that Hodgkin–Huxley-type models, while highly detailed, require integrating four stiff equations per neuron, making large-scale simulation infeasible, and that simple integrate-and-fire models cannot reproduce many cortical firing [@izhikevichSimpleModelSpiking2003]. To address this, he derived a minimal two-variable model that can emulate diverse neuron behaviors—tonic spiking, bursting, chattering, and more—by tuning just four parameters [@izhikevichWhichModelUse2004].
+
+Mathematically, the model comprises these coupled ordinary differential equations:
+
+\begin{equation}
+$$\frac{dt}{dv}​=0.04v^2+5v+140−u+I(t),$$
+\label{eqn:iz1}
+\end{equation}
+
+\begin{equation}
+$$ \frac{du}{dt}=a(b v−u),$$
+\label{eqn:iz2}
+\end{equation}
 
 
+where v is the membrane potential (in mV), u is a membrane recovery variable accounting for K+ activation and Na+ inactivation, and I(t) is an external input current [@izhikevichSimpleModelSpiking2003]. When v reaches the peak (typically 30 mV), it and u are reset:
 
-## Synapse Models
+\begin{equation}
+$$
+\text{if } v \geq 30\,\text{mV}, \quad
+\begin{cases}
+v \leftarrow c \\
+u \leftarrow u + d
+\end{cases}
+$$
+\label{eqn:iz3}
+\end{equation}
 
+with (a,b,c,d) chosen to match specific neuron types. Despite its simplicity, this formulation reproduces over twenty cortical firing patterns by varying these four parameters, far surpassing the expressive capacity of the LIF model [@izhikevichWhichModelUse2004].
 
+Critically, Izhikevich demonstrated that this model runs in real time for tens of thousands of neurons on a single CPU core - comparable to LIF performance -while maintaining Hodgkin–Huxley-level richness in spike dynamics. Thus, by augmenting the LIF framework with a single recovery variable and non-linear voltage dependence, the Izhikevich model provides an efficient yet versatile platform for large-scale SNN training and simulation.
 
+## Information Coding 
 
-
-
-## Information coding 
-
-In digital images, each pixel is stored as a number which represents the red, green, and blue light intensity at that point - a higher number indicates greater intensity of light. In digital audio, each timestep is encoded as a number which indicates the strength of the pressure perturbation at that particular time. So how can an image or audio be passed into a spiking neural network? In other words, how is it turned into spikes? Methods for coding information into spike trains can be classified into two groups - rate coding and temporal coding. A good place to start would be taking inspiration from the brain. Rate coding transfers information in the frequency of spikes at a given moment. Initially it was thought that rate coding was the predominant technique to transmit information within the nervous system [@adrianImpulsesProducedSensory1926], however 
+In digital images, each pixel is stored as a number which represents the red, green, and blue light intensity at that point - a higher number indicates greater intensity of light. In digital audio, each timestep is encoded as a number which indicates the strength of the pressure perturbation at that particular time. So how can an image or audio be passed into a spiking neural network? In other words, how is it turned into spikes? Methods for coding information into spike trains can be classified into two groups - rate coding and temporal coding. A good place to start would be taking inspiration from the brain. Rate coding transfers information in the frequency of spikes at a given moment. Initially it was thought that rate coding was the predominant technique to transmit information within the nervous system [@adrianImpulsesProducedSensory1926], however later research showed that all sensory organs encode their 
 
 
 
@@ -319,7 +389,7 @@ The model uses Leaky Integrate-and-Fire neuron model with exponential synapses. 
 The input is provided into the model and it is allowed to develop under neuronal dynamics. The loss is calculated according to Equation (\ref{eqn:lsumexp}). Using the adjoint method the loss is propagated backwards to find out how the timing of each event contributed to the loss so that the weights of the synapses can be adjusted accordingly.  
 
 \begin{equation}
-\mathcal{L}_{sum-exp} = -\frac{1}{N_{batch}} \sum^{N_{bathc}}_{m=1}log(\frac{exp(\int^{T}_{0} e^{-t/T}V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0}e^{-t/T}V^{m}_{k}(t) dt)})
+$$\mathcal{L}_{sum-exp} = -\frac{1}{N_{batch}} \sum^{N_{bathc}}_{m=1}log(\frac{exp(\int^{T}_{0} e^{-t/T}V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0}e^{-t/T}V^{m}_{k}(t) dt)})$$
 \label{eqn:lsumexp}
 \end{equation}
 
