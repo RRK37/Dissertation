@@ -1,5 +1,5 @@
 ---
-title: Training neuromorphic neural networks for speech recognition and Bayesian optimisation of network hyperparameters
+title: Training Neuromorphic Neural Networks for Speech Recognition
 author:
   - name: "Rihards Klotiņš"
   - name: "Supervisor: Dorian Florescu"
@@ -15,8 +15,8 @@ bibliography: references.bib
 biblio-style: IEEEtran
 preamble: |
   \hyphenation{bio-di-ver-si-ty sap-lings}
-pdftoc: false
-toc-depth: 1
+pdftoc: true
+toc-depth: 2
 urlcolor: blue
 always_allow_html: yes
 csquotes: true
