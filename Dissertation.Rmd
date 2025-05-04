@@ -256,6 +256,7 @@ Critically, Izhikevich demonstrated that this model runs in real time for tens o
 Alone, a neuron doesn't do anything very impressive; in a network, intelligent behaviour can emerge. When many neurons are connected together, forming a neural network, they can collectively process information, detect patterns, and make decisions. Each neuron receives inputs from other neurons through connections called synapses (figure @ref(fig:simple_neural_network)). These connections have strengths, or "weights", which determine how much influence one neuron has on another; these strengths are visualised by the colour of the connections in figure @ref(fig:simple_neural_network). By carefully adjusting these weights, the network can learn to perform complex tasks such as image recognition, speech processing, or decision-making. This idea underpins both biological neural circuits and artificial neural networks used in machine learning.
 
 ![Diagram of a 3 layer neural network. The weights of the synapses are visualised by the colours of the connections.](images/simple_neural_network.png){#fig:simple_neural_network fig-align=center}
+
 # Training Neural Networks
 
 The objective of training a neural network for spoken word recognition is to construct a model that accurately maps audio input to the correct lexical output. Supervised learning remains the dominant training paradigm in this domain, consistently achieving state-of-the-art results in speech recognition tasks [@dengMachineLearningParadigms2013; @hintonDeepNeuralNetworks2012]. Supervised learning relies on labelled datasets—typically composed of audio clips annotated with their corresponding transcriptions—providing explicit guidance for the model to learn the mapping between acoustic features and linguistic units. In contrast, unsupervised learning operates on unlabelled data, requiring the model to uncover inherent structure or patterns within the input without external annotation. Next I will discuss different ways that neural networks can be trained. 
@@ -282,34 +283,32 @@ To visualise how the loss of a network is minimised, let us assume that a networ
 
 ![(a) ANN neuron (b) SNN neuron](images/gradient_descent_3d_axis.png){#fig:gradient_descent_3d_axis fig-align=center}
 
-To demonstrate how backpropagation works, let's consider this simplified, fully-connected network consisting of a layer of input neurons, hidden neurons, and output neurons (Figure @`````````````````````````
-```ref(fig:mlp_3_layer)). Fully-connected means each neuron in a layer is connected to all neurons in the following layer. 
+To demonstrate how backpropagation works, let's consider a simplified, fully-connected network consisting of a layer of input neurons, hidden neurons, and output neurons (Figure @ref(fig:mlp_3_layer)). Fully-connected means each neuron in a layer is connected to all neurons in the following layer. 
 
 
 ![$x$ is the input vector of length 3. $h$ is the hidden layer of length 6. $W^{x-h}$ is the matrix containing the values of each of the weights connecting $x$ and $h$, thus it is of size 3 by 6. $y$ is the output vector of length 3. $W^{h-y}$ is the matrix containing the values of each of the weights connecting $h$ and $y$. thus it is of size 6 by 3.](images/mlp_3_layer.png){#fig:mlp_3_layer fig-align=center}
 
-**Change to W_xh and W_hy**
-
-The highlighted neuron, $h_{1}$, is connected to all input neurons, $x_{1}$, $x_{2}$, and $x_{3}$. This means $h_{1}$ is a weighted sum of the input neurons, $x$ (Equation \ref{eqn:weighted_sum}).  
+The highlighted neuron, $h_{1}$, is connected to all input neurons, $x_{1}$, $x_{2}$, and $x_{3}$.  Therefore $h_{1}$ is a weighted sum of all the input neurons (Equation \ref{eqn:weighted_sum}).  
 
 \begin{equation}
 h_{1} = \sum_{i=1}^{3} x_{i}\times W_{i}^{1}
 \label{eqn:weighted_sum}
 \end{equation}
 
-An efficient way to write these weighted summations for all of the neurons in a layer is by using matrix algebra. 
+An efficient way to write these weighted summations for all of the neurons in a layer is by using matrix algebra.
 
-$$h = x\times W^{'}$$
-$$y = h\times W^{''}$$
+$$h = x\times W^{x-h}$$
+$$y = h\times W^{h-y}$$
 
-These two equations encompass all of the weighted summations that define the network. The relationship between the equation \ref{eqn:weighted_sum} and the matrix multiplication representation of the network is highlighted in figure @ref(fig:matrix_of_network).
+These two equations encompass all of the weighted summations that define the network. The relationship between the weighted summation equation ( equation \ref{eqn:weighted_sum}) and the matrix multiplication representation of the network is highlighted in figure @ref(fig:matrix_of_network). You can see that each input neuron $x_i$ is multiplied by the corresponding weight $w_{i,1}$ and summed to give $h_1$. 
 
 ![Matrix multiplication visualisation.](images/matrix_of_network.png){#fig:matrix_of_network fig-align=center}
 
-To train the network and adjust the weights, we perform inference on labelled data and calculate the error using a loss function $l()$, such as mean squared error (MSE):
+
+Matrix multiplications perform the *forward pass* of the network - i.e. the inference. This inferred output value, $y$, is compared with the true "label" value, $y_{label}$. The comparison between the actual output and the desired output is dome by a loss function, $l()$. There are many ways of implementing the loss function, one way by finding the mean squared error (MSE):
 
 \begin{equation}
-L = l(y, y_{\text{label}})
+L = l(y, y_{label})
 \end{equation}
 
 The goal is to minimize this loss by updating the network's weights in the direction of the negative gradient. This requires computing the gradient of the loss with respect to each weight $w_i$:
@@ -318,19 +317,19 @@ The goal is to minimize this loss by updating the network's weights in the direc
 \frac{\partial L}{\partial w_i}
 \end{equation}
 
-We first calculate the gradient of the layer closest to the output, $W^{''}$.
+We first calculate the gradient of the layer closest to the output, $W^{h-y}$.
 
 \begin{equation}
-\frac{\partial L}{\partial W^{''}} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial W^{''}} = \frac{\partial L}{\partial y} \cdot h
+\frac{\partial L}{\partial W^{h-y}} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial W^{h-y}} = \frac{\partial L}{\partial y} \cdot h
 \end{equation}
 
-We then use the chain rule again to calculate the gradient of $L$ with respect to $W^{'}$.
+We then use the chain rule again to calculate the gradient of $L$ with respect to $W^{x-h}$.
 
 \begin{equation}
-\frac{\partial L}{\partial W^{'}} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial h} \cdot \frac{\partial h}{\partial W^{'}} = \frac{\partial L}{\partial y} \cdot W^{''} \cdot x
+\frac{\partial L}{\partial W^{x-h}} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial h} \cdot \frac{\partial h}{\partial W^{x-h}} = \frac{\partial L}{\partial y} \cdot W^{h-y} \cdot x
 \end{equation}
 
-This step-by-step application of the chain rule allows the error to be propagated backward through the network, enabling efficient computation of gradients at each layer—this is the essence of backpropagation.
+This step-by-step application of the chain rule allows the error to be propagated backward through the network, enabling efficient computation of gradients at each layer - this is the essence of backpropagation.
 
 Once the gradients are known, the weights are updated using the gradient descent rule:
 
@@ -338,7 +337,9 @@ Once the gradients are known, the weights are updated using the gradient descent
 w_i \leftarrow w_i - \eta \frac{\partial L}{\partial w_i}
 \end{equation}
 
-where $\eta$ is the learning rate. Repeating this process across many training examples allows the network to gradually learn the desired input-output mapping by descending the loss function surface. A problem with this approach to be aware of is that the gradient descent algorithm may find a local minimum of the loss function instead of the global minimum. As a result the performance of the model may be significantly lower than it potentially could be. A prominent way of dealing with this problem is by training the network several times with different random weight initialisations; if one network initialisation gets stuck in a local minima, others may not. This may not be enough if there are too many local minima. 
+where $\eta$ is the learning rate. A higher $\eta$ would mean faster learning but risks instability. A lower $\eta$ would ensure stable convergence to the minima, but may make the training very slow. 
+
+Repeating this backpropagation process across many training examples allows the network to gradually learn the desired input-output mapping by descending the loss function surface. A problem with this approach to be aware of is that the gradient descent algorithm may find a local minimum of the loss function instead of the global minimum. As a result the performance of the model may be significantly lower than it potentially could be. A popular way of dealing with this problem is by training the network several times with different random weight initialisations; if one network initialisation gets stuck in a local minima, others may not. If there are too many local minima, this approach may not be enough.
 
 
 ![Loss function 3D surface being descended.](images/gradient_descent_3d.png){#fig:gradient_descent_3d fig-align=center}
@@ -346,7 +347,6 @@ where $\eta$ is the learning rate. Repeating this process across many training e
 ## Spiking Neural Network Training
 
 While backpropagation has proven to be a powerful algorithm for training artificial neural networks, it cannot be directly applied to spiking neural networks (SNNs). This is primarily due to the non-differentiable nature of spike events, which prevents the straightforward calculation of gradients required for weight updates. Additionally, SNNs operate in continuous time and rely on event-based communication, introducing complex temporal dynamics that further complicate gradient-based optimization. As a result, researchers have developed a range of alternative training algorithms tailored to the unique characteristics of SNNs. In this section, we introduce several of these methods, highlighting how they address the challenges of spike-based computation and enable effective learning in spiking systems.
-
 
 ### ANN-to-SNN Conversion
 
@@ -360,7 +360,7 @@ When applied to speech‑recognition benchmarks—such as the Spiking Speech Com
 
 However, BPTT comes with two major downsides. First, it requires storing every intermediate state over the entire duration of an input—meaning memory usage grows with the length of the audio clip, which can quickly exceed hardware limits for long recordings [@zhouDirectTrainingHighperformance2024]. Second, because the learning rule relies on a global error signal propagated across many time steps and layers, it differs starkly from the local, synapse‑by‑synapse learning observed in biological brains—undermining some of the potential efficiency gains of neuromorphic hardware [@wangS3NNTimStep2022]. 
 
-### Parallelisable LIF
+#### Parallelisable LIF
 
 The major bottleneck in training spiking neural networks (SNNs) using BPTT is the strictly sequential nature of classic Leaky Integrate‑and‑Fire (LIF) neurons, which update their membrane potential step by step in time. The Parallelizable LIF (ParaLIF) model overcomes this by decoupling the linear integration of inputs from the spiking (thresholding) operation and executing both across all time steps in parallel. This reorganization leverages highly optimized matrix operations on modern accelerators to deliver dramatic speed‑ups in training, without altering the fundamental membrane‑and‑spike dynamics that give SNNs their event‑driven efficiency [@arnaudyargaAcceleratingSpikingNeural2025; @yargaAcceleratingSNN2023].
 
