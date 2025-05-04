@@ -128,10 +128,9 @@ Spiking neural networks are inherently time dependent since information is encod
 
 ## Spiking Heidelberg Digits Dataset
 
-The Spiking Heidelberg Digits (SHD) dataset [citation needed] is a prominent spiking neural network benchmark. The wide use of SHD makes it good for fairly comparing different methods of training models. It is based on the Heidelberg Digits dataset, which is a collection of 10,000 high-quality recordings of spoken digits (0 to 9) in English and German. It is spoken by a relatively representative group of 6 males and 6 females of the ages 21 to 56 years old, with a mean age of 29. The HD dataset was converted into spike trains using a biologically realistic model of the human cochlea, outputting 700 channels of spikes representing different frequency bands picked up by the ear.
+The Spiking Heidelberg digits dataset [@SpikingHeidelbergDigits] is derived from the Heidelberg Digits dataset, comprising approximately 10,000 high-quality recordings of spoken digits (0 to 9) in English and German. These recordings feature a balanced group of 12 speakers (6 males and 6 females) aged between 21 and 56 years, with a mean age of 29. The audio data is converted into spike trains using the Lauscher artificial cochlea model, resulting in 700 input channels that represent different frequency bands detected by the human ear. This transformation captures the temporal dynamics of speech, making the dataset suitable for training and evaluating SNNs that process time-dependent information.​
 
-[How are spikes encoded. Temporal or rate?]
-[Compare against other speech data sets.]
+The SSC dataset is a spiking version of the Google Speech Commands dataset, containing a large number of utterances across 35 word categories. These recordings are processed using the same Lauscher artificial cochlea model as in SHD, producing spike trains over 700 input channels [@PapersCodeSSC]. The SSC dataset encompasses a broader vocabulary and a larger speaker base, providing a more extensive benchmark for SNNs in speech recognition tasks.​
 
 # Spiking Neuron Model
 
@@ -405,11 +404,45 @@ While STDP offers advantages such as biological plausibility, local learning, an
 
 ### Eventprop
 
+STDP shows 
+
 Staying on the theme of implementing the ubiquitous backpropagation for SNNs in a more efficient manner, we come to a novel training algorithm called eventprop. Eventprop utilises precise spike gradients to train the network, as opposed to approximate surrogate gradients typically used in BPTT, and it does so while using less compute and memory resources. It reaches SOTA performance while using 4x less memory and running 3x faster. [@nowotnyLossShapingEnhances2025]
+
+Staying on the theme of implementing the ubiquitous backpropagation for SNNs in a more efficient manner, we come to a novel training algorithm called eventprop. Eventprop utilises precise spike gradients to train the network, as opposed to approximate surrogate gradients typically used in BPTT, and it does so while using less compute and memory resources. It reaches SOTA performance while using 4x less memory and running 3x faster.
+
+Returning to the backpropagation 
+
+Eventprop stands out by employing the adjoint method from optimization theory to **compute the exact gradients** of a loss function with respect to the network's parameters. This approach allows for backpropagation through the discrete, non-differentiable spike events without relying on approximations or smoothing techniques, which are common in surrogate gradient methods. The ability to calculate exact gradients can be particularly appealing for researchers seeking a more rigorous and potentially more effective training method for SNNs.
+
+A key advantage of Eventprop is its event-driven nature. Similar to the forward propagation of information in an SNN, the backward propagation of error signals in Eventprop occurs only at the precise times of recorded spikes. **This results in significant temporal and spatial sparsity in the computation, leading to reduced computational cost** and improved efficiency, especially for parallel computing architectures.
+
+Furthermore, Eventprop offers favorable memory requirements compared to methods like BPTT. **It only necessitates the storage of neuron states at the times of spike events**, rather than at every time step, which can drastically reduce memory usage, particularly for long input sequences common in speech recognition tasks. This memory efficiency makes Eventprop well-suited for implementation on resource-constrained neuromorphic hardware.
+
+Eventprop has demonstrated its effectiveness on challenging speech recognition benchmarks. It has achieved **state-of-the-art performance on the Spiking Heidelberg Digits** (SHD) dataset and shown good accuracy on the Spiking Speech Commands (SSC) dataset when training recurrent spiking neural networks. Notably, when compared to leading surrogate gradient-based SNN training methods, implementations of Eventprop have been shown to be significantly faster (up to 3x) and require considerably less memory (up to 4x). This efficiency makes Eventprop a promising candidate for scaling SNN training to more complex tasks and larger networks.
+
+The algorithm has been successfully implemented in GPU-enhanced neural network frameworks like GeNN and mlGeNN, making it accessible for researchers to utilize its benefits. Moreover, Eventprop's suitability for neuromorphic hardware has been explored, with **successful deployments on platforms like Intel's Loihi 2, showcasing its potential for low-power, event-based machine learning on specialized hardware**.
+
+Eventprop's flexibility extends to its compatibility with a wider class of loss functions, including those commonly used with BPTT, allowing researchers to tailor the training process to specific task requirements. Furthermore, the Eventprop formalism can be extended to incorporate learnable delays within SNNs, which can be crucial for capturing temporal dependencies in sequential data like speech. Given that speech recognition datasets often utilize event-based data from cochlear models, Eventprop's event-driven nature aligns well with this type of input, potentially leading to more effective learning of the temporal dynamics inherent in speech signals.
+
+In summary, Eventprop offers a compelling approach to training SNNs for speech recognition by providing exact gradients, computational and memory efficiency, strong performance on benchmark datasets, and suitability for neuromorphic hardware. Its unique characteristics make it a powerful tool for advancing the field of spiking neural networks and realizing their potential for energy-efficient and high-performance speech processing.
+
+
+
+
+
 
 More detail and explain why I have chosen it
 
 **Why Eventprop is the best**
+
+
+
+
+
+
+
+
+
 
 # Improving Training Using New Loss
 
