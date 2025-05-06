@@ -116,7 +116,7 @@ set.seed(973)
 
 Artificial Neural Networks (ANN) are computational models inspired by the brain; made up of layers of interconnected "neurons" which can learn patterns when given large amounts of data. After learning patterns, ANNs can be used to make inferences, predicting an output based on some given input. ANNs have long been used for application ranging from computer vision to financial forecasting. However the use of ANNs has surged recently, increasing fourfold since 2017, driven by the development of generative AI models like ChatGPT [@StateAI2025]. To compound this, models are growing in size and becoming more complex, consequently the global AI power consumption is increasing at an exponential rate [@kindigAIPowerConsumption]. Not only does this make models expensive to operate, but it also raises sustainability concerns. 
 
-A graphics processing unit (GPU) running a large language model (LLM) consumes hundreds of watts of power. On the other hand, the human brain processes sensory information, keeps involuntary biological systems functioning, runs its own language model, and enables conscious thought — all while using only about 20 watts. Such efficient information processing has motivated research into neuromorphic computing - a field aiming to emulate the brain’s neural architecture. Spiking Neural Networks (SNNs) are considered the third generation of neural network models [@maassNetworksSpikingNeurons1997], where ANNs are considered the second generation. Compared to neurons in ANNs, SNN neurons more closely model how biological neurons behave in the brain. For a second generation neuron, the output is a weighted sum of the inputs passed through an activation function (see Figure \ref{fig:second_vs_third_gen} (a)). For a third generation neuron, the output is a spike, sometimes referred to as an event, which occurs when the voltage of a neuron surpasses a threshold (Figure \ref{fig:second_vs_third_gen} (b)), this results in neurons communicating with each other via series of spikes, which vary in timing and frequency. Since information is encoded in the timing of outputs, SNNs can inherently capture temporal patterns and dynamic behaviours in sequential data, making them inherently capable at processing tasks involving time-dependent signals, such as speech recognition, sensory processing, and event-based data streams. Moreover, it has been shown that SNNs theoretically posses higher computational power than the previous generation of ANNs [@maassComputationalPowerCircuits2004]. Spiking neurons only activate when necessary, and don't require a clock signal, enabling massive power savings. For instance, the leading neuromorphic platform TrueNorth is capable of simulating a million spiking neurons in real-time while consuming 63 mW. The equivalent network executed on a high-performance computing platform was 100–200× slower than real-time and consumed 100,000 to 300,000× more energy per synaptic event [@merollaMillionSpikingneuronIntegrated2014]. The power savings of SNNs could be game-changing in edge computing devices that run on battery or have limited power budgets - like smartphones or remote environmental sensors. On top of this, their low-latency could benefit autonomous vehicles and robotics. 
+A graphics processing unit (GPU) running a large language model (LLM) consumes hundreds of watts of power. On the other hand, the human brain processes sensory information, keeps involuntary biological systems functioning, runs its own language model, and enables conscious thought — all while using only about 20 watts. Such efficient information processing has motivated research into neuromorphic computing - a field aiming to emulate the brain’s neural architecture. Spiking Neural Networks (SNNs) are considered the third generation of neural network models [@maassNetworksSpikingNeurons1997], where ANNs are considered the second generation. Compared to neurons in ANNs, SNN neurons more closely model how biological neurons behave in the brain. For a second generation neuron, the output is a weighted sum of the inputs passed through an activation function (see figure \ref{fig:second_vs_third_gen} (a)). For a third generation neuron, the output is a spike, sometimes referred to as an event, which occurs when the voltage of a neuron surpasses a threshold (Figure \ref{fig:second_vs_third_gen} (b)), this results in neurons communicating with each other via series of spikes, which vary in timing and frequency. Since information is encoded in the timing of outputs, SNNs can inherently capture temporal patterns and dynamic behaviours in sequential data, making them inherently capable at processing tasks involving time-dependent signals, such as speech recognition, sensory processing, and event-based data streams. Moreover, it has been shown that SNNs theoretically posses higher computational power than the previous generation of ANNs [@maassComputationalPowerCircuits2004]. Spiking neurons only activate when necessary, and don't require a clock signal, enabling massive power savings. For instance, the leading neuromorphic platform TrueNorth is capable of simulating a million spiking neurons in real-time while consuming 63 mW. The equivalent network executed on a high-performance computing platform was 100–200× slower than real-time and consumed 100,000 to 300,000× more energy per synaptic event [@merollaMillionSpikingneuronIntegrated2014]. The power savings of SNNs could be game-changing in edge computing devices that run on battery or have limited power budgets - like smartphones or remote environmental sensors. On top of this, their low-latency could benefit autonomous vehicles and robotics. 
 
 
 ![(a) 2nd generation neuron. (b) 3rd generation neuron.](images/ann_vs_snn_neuron_model_diagra.png){#fig:second_vs_third_gen fig-align=center}
@@ -256,6 +256,8 @@ Critically, Izhikevich demonstrated that this model runs in real time for tens o
 ## Neural Networks
 
 Alone, a neuron doesn't do anything very impressive; in a network, intelligent behaviour can emerge. When many neurons are connected together, forming a neural network, they can collectively process information, detect patterns, and make decisions. Each neuron receives inputs from other neurons through connections called synapses (figure \ref{fig:simple_neural_network}). These connections have strengths, or "weights", which determine how much influence one neuron has on another; these strengths are visualised by the colour of the connections in figure \ref{fig:simple_neural_network}. By carefully adjusting these weights, the network can learn to perform complex tasks such as image recognition, speech processing, or decision-making. This idea underpins both biological neural circuits and artificial neural networks used in machine learning.
+
+**==RECURRENT NEURAL NETWORKS==**
 
 ![Diagram of a 3 layer neural network. The weights of the synapses are visualised by the colours of the connections.](images/simple_neural_network.png){#fig:simple_neural_network fig-align=center}
 
@@ -404,64 +406,31 @@ While STDP offers advantages such as biological plausibility, local learning, an
 
 ### Eventprop
 
-STDP shows 
+A novel, accurate, and efficient training algorithm. Eventprop uses the adjoint method from optimisation theory to implement backpropagation in an efficient manner for spiking neural networks. Unlike other implementations of backpropagation for SNNs, Eventporp computes *exact* gradients to train the network, as opposed to approximate surrogate gradients typically used in BPTT. Moreover, it does so while using less compute and memory resources, reaching state-of-the-art (SOTA) performance for the SHD dataset while using 4x less memory and running 3x faster [@nowotnyLossShapingEnhances2025].  
 
-Staying on the theme of implementing the ubiquitous backpropagation for SNNs in a more efficient manner, we come to a novel training algorithm called eventprop. Eventprop utilises precise spike gradients to train the network, as opposed to approximate surrogate gradients typically used in BPTT, and it does so while using less compute and memory resources. It reaches SOTA performance while using 4x less memory and running 3x faster. [@nowotnyLossShapingEnhances2025]
-
-Staying on the theme of implementing the ubiquitous backpropagation for SNNs in a more efficient manner, we come to a novel training algorithm called eventprop. Eventprop utilises precise spike gradients to train the network, as opposed to approximate surrogate gradients typically used in BPTT, and it does so while using less compute and memory resources. It reaches SOTA performance while using 4x less memory and running 3x faster.
-
-Returning to the backpropagation 
-
-Eventprop stands out by employing the adjoint method from optimization theory to **compute the exact gradients** of a loss function with respect to the network's parameters. This approach allows for backpropagation through the discrete, non-differentiable spike events without relying on approximations or smoothing techniques, which are common in surrogate gradient methods. The ability to calculate exact gradients can be particularly appealing for researchers seeking a more rigorous and potentially more effective training method for SNNs.
-
-A key advantage of Eventprop is its event-driven nature. Similar to the forward propagation of information in an SNN, the backward propagation of error signals in Eventprop occurs only at the precise times of recorded spikes. **This results in significant temporal and spatial sparsity in the computation, leading to reduced computational cost** and improved efficiency, especially for parallel computing architectures.
-
-Furthermore, Eventprop offers favorable memory requirements compared to methods like BPTT. **It only necessitates the storage of neuron states at the times of spike events**, rather than at every time step, which can drastically reduce memory usage, particularly for long input sequences common in speech recognition tasks. This memory efficiency makes Eventprop well-suited for implementation on resource-constrained neuromorphic hardware.
-
-Eventprop has demonstrated its effectiveness on challenging speech recognition benchmarks. It has achieved **state-of-the-art performance on the Spiking Heidelberg Digits** (SHD) dataset and shown good accuracy on the Spiking Speech Commands (SSC) dataset when training recurrent spiking neural networks. Notably, when compared to leading surrogate gradient-based SNN training methods, implementations of Eventprop have been shown to be significantly faster (up to 3x) and require considerably less memory (up to 4x). This efficiency makes Eventprop a promising candidate for scaling SNN training to more complex tasks and larger networks.
-
-The algorithm has been successfully implemented in GPU-enhanced neural network frameworks like GeNN and mlGeNN, making it accessible for researchers to utilize its benefits. Moreover, Eventprop's suitability for neuromorphic hardware has been explored, with **successful deployments on platforms like Intel's Loihi 2, showcasing its potential for low-power, event-based machine learning on specialized hardware**.
-
-Eventprop's flexibility extends to its compatibility with a wider class of loss functions, including those commonly used with BPTT, allowing researchers to tailor the training process to specific task requirements. Furthermore, the Eventprop formalism can be extended to incorporate learnable delays within SNNs, which can be crucial for capturing temporal dependencies in sequential data like speech. Given that speech recognition datasets often utilize event-based data from cochlear models, Eventprop's event-driven nature aligns well with this type of input, potentially leading to more effective learning of the temporal dynamics inherent in speech signals.
-
-In summary, Eventprop offers a compelling approach to training SNNs for speech recognition by providing exact gradients, computational and memory efficiency, strong performance on benchmark datasets, and suitability for neuromorphic hardware. Its unique characteristics make it a powerful tool for advancing the field of spiking neural networks and realizing their potential for energy-efficient and high-performance speech processing.
+What allows Eventprop to be so efficient is its event-driven nature. Similar to the forward propagation of information in an SNN, the backward propagation of error signals in Eventprop occurs only at the precise times of recorded spikes [@wunderlichEventbasedBackpropagationCan2021], see how in figure \ref{fig:eventprop_backpropagation} the backpropagated error signals occur at the same time in the backward propagation as the spike signals do in the forward propagation. This results in significant temporal and spatial sparsity in the computation, leading to reduced computational cost and improved efficiency, especially for parallel computing architectures such as the ones in GPUs. The algorithm has been successfully implemented in GPU-enhanced neural network frameworks like GeNN and mlGeNN, making it accessible for researchers. Furthermore, Eventprop offers favourable memory requirements compared to methods like BPTT. It only necessitates the storage of neuron states at the times of spike events, rather than at every time step, which can drastically reduce memory usage, particularly for long input sequences common in speech recognition tasks. This memory efficiency makes Eventprop well-suited for implementation on resource-constrained neuromorphic hardware. Application of Eventprop on neuromorphic hardware was recently explored, with successful deployments on platforms like Intel's Loihi 2, showcasing its potential for low-power, event-based machine learning on specialized hardware [@shoesmithEventpropTrainingEfficient2025]. 
 
 
+![Spikes propagated forward according to LIF neuron dynamics. Error signals propagated backward according to the adjoint method.](images/eventprop_backpropagation.png){#fig:eventprop_backpropagation fig-align=center}
 
 
+Eventprop has demonstrated its effectiveness on challenging speech recognition benchmarks. It has achieved state-of-the-art performance on the Spiking Heidelberg Digits (SHD) dataset and shown good accuracy on the Spiking Speech Commands (SSC) dataset when training recurrent spiking neural networks. Notably, when compared to leading surrogate gradient-based SNN training methods, implementations of Eventprop have been shown to be significantly faster (up to 3x) and require considerably less memory (up to 4x) [@nowotnyLossShapingEnhances2025]. This efficiency makes Eventprop a promising candidate for scaling SNN training to more complex tasks and larger networks.
 
+Eventprop's flexibility extends to its compatibility with a wider class of loss functions [@nowotnyLossShapingEnhances2025], including those commonly used with BPTT, allowing researchers to tailor the training process to specific task requirements. Furthermore, the Eventprop formalism can be extended to incorporate learnable delays within SNNs, which can be crucial for capturing temporal dependencies in sequential data like speech. 
 
-More detail and explain why I have chosen it
-
-**Why Eventprop is the best**
-
-
-
-
-
-
-
-
-
+In summary, Eventprop is a direct training method - unlike ANN-to-SNN conversion - which enables it to train networks of architectures more suited to SNNs as, improving processing of dynamic data. Moreover, as a direct training method it doesn't require the costly conversion step. Eventprop performs more efficiently - both computationally and memory wise - than BPTT implementations like Spyx, scalling better for longer sample durations. In addition, unlike the Parallelisable-LIF implementation of BPTT - which does come with performance increases - Eventprop doesn't increase the complexity of neuronal model implementations which allows it do be implemented in neuromorphic hardware, unlocking the great potential of efficiency for SNNs. Not only does Eventprop scale better than eligibility propagation (e-prop) in terms of compute resources, it also doesn't use approximate gradients and thus achieves better performance. And finally, Eventprop is easier to train for complex tasks than spike-timing-dependent-plasticity (STDP) based approaches, requiring less computational resources and achieving better performance. For these reasons I have chosen to train the spiking neural network using Eventprop for speech recognition; it shows great potential for efficiently and accurately training larger models which can be used for efficient edge processing, such as is used on smartphones for voice recognition.
 
 # Improving Training Using New Loss
 
-# Methods
 
-o Introduce why loss functions seems funky
+o Introduce why loss functions seems sub optimal
 o Provide evidence for this. I.e. early spikes shouldn't be weighted more since they may just be random
 o Implement a new one which is bell curve looking
 
 
+The current loss function is very simple. The later the spike occurs the less it contributes to the loss - exponentially. Surely spikes happening at the very beginning - when the word has barely begun to be said - shouldn't be so highly weighted? What if the loss is some kind of bell curve. where spikes in the middle contribute to the loss the most. 
 
-Focus on hyper-parameter hyper parameter optimisation.
-include past paper
-
-
-Choose which one is better and more unique
-
-
-## Training Process
+# Training Process
 
 Walk through how eventprop works mathematically. 
 
@@ -472,7 +441,7 @@ The input is provided into the model and it is allowed to develop under neuronal
 \label{eqn:lsumexp}
 \end{equation}
 
-## Model Description 
+# Model Description 
 
 First I implemented the same model used in [@nowotnyLossShapingEnhances2025] to get SOTA performance. The model uses Leaky Integrate-and-Fire neuron model with exponential synapses. It has an input layer of 700 neurons - corresponding to the 700 channels of the cochlea model used by SHD - and 20 output neurons for digits 0 to 9 in English and German. The model has a single hidden layer which has been tested with a size of 64, 128, 256, 512, and 1024. The hidden layer was tested using feed-forward only connections and fully connected recurrent connections, showing best results with a recurrent architecture.
 
@@ -480,14 +449,7 @@ This loss was chosen as it deals with the problem highlighted by the Gedanken Ex
 
 
 
-## Bayesian optimisation of hyperparameters
+# Bayesian optimisation of hyperparameters
 
 Optimise variables like tau, random shift delay, etc. by implementing Bayesian optimisaion in software.
 
-## Exploring novel loss functions
-
-The current loss function is very simple. The later the spike occurs the less it contributes to the loss - exponentially. Surely spikes happening at the very beginning - when the word has barely begun to be said - shouldn't be so highly weighted? What if the loss is some kind of bell curve. where spikes in the middle contribute to the loss the most. 
-
-
-
-# Results
