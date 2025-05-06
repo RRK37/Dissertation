@@ -441,6 +441,11 @@ The input is provided into the model and it is allowed to develop under neuronal
 \label{eqn:lsumexp}
 \end{equation}
 
+
+Alternate loss function weight, Gaussian window:
+$$w(t) = exp(-\frac{(t-μ)^2}{2σ^2})$$
+
+
 # Model Description 
 
 First I implemented the same model used in [@nowotnyLossShapingEnhances2025] to get SOTA performance. The model uses Leaky Integrate-and-Fire neuron model with exponential synapses. It has an input layer of 700 neurons - corresponding to the 700 channels of the cochlea model used by SHD - and 20 output neurons for digits 0 to 9 in English and German. The model has a single hidden layer which has been tested with a size of 64, 128, 256, 512, and 1024. The hidden layer was tested using feed-forward only connections and fully connected recurrent connections, showing best results with a recurrent architecture.
