@@ -16,7 +16,7 @@ biblio-style: IEEEtran
 preamble: |
   \hyphenation{bio-di-ver-si-ty sap-lings}
 pdftoc: true
-toc-depth: 2
+toc-depth: 3
 urlcolor: blue
 always_allow_html: yes
 csquotes: true
@@ -443,7 +443,7 @@ The input is provided into the model and it is allowed to develop under neuronal
 
 
 Alternate loss function weight, Gaussian window:
-$$w(t) = exp(-\frac{(t-μ)^2}{2σ^2})$$
+$$w(t) = exp(-\frac{(t-\mu)^2}{2\sigma^2})$$
 
 
 # Model Description 

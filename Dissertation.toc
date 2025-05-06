@@ -1,0 +1,25 @@
+\xpginauxfiletrue 
+\selectlanguage *[variant=us]{english}
+\selectlanguage *[variant=us]{english}
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Problem to Solve}{4}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Spiking Heidelberg Digits Dataset}{4}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Spiking Neuron Model}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Hodgkin--Huxley}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Leaky Integrate-and-Fire Neuron}{6}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Izhikevich}{8}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Neural Networks}{10}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Training Neural Networks}{10}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Backpropagation}{10}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Spiking Neural Network Training}{15}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}ANN-to-SNN Conversion}{15}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Backpropagation-Through-Time}{16}{subsubsection.3.2.2}%
+\contentsline {paragraph}{Parallelisable LIF}{16}{section*.13}%
+\contentsline {subsubsection}{\numberline {3.2.3}Eligibility Propagation}{17}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}Spike-Time-Dependent-Plasticity}{18}{subsubsection.3.2.4}%
+\contentsline {subsubsection}{\numberline {3.2.5}Eventprop}{19}{subsubsection.3.2.5}%
+\contentsline {section}{\numberline {4}Improving Training Using New Loss}{20}{section.4}%
+\contentsline {section}{\numberline {5}Training Process}{20}{section.5}%
+\contentsline {section}{\numberline {6}Model Description}{21}{section.6}%
+\contentsline {section}{\numberline {7}Bayesian optimisation of hyperparameters}{21}{section.7}%
+\xpginauxfilefalse 
