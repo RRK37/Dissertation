@@ -1,0 +1,13 @@
+{
+	"nodes":[
+		{"id":"ae4b74aa5fb5d5a3","type":"file","file":"Eventprop Maths/Pasted image 20250506141932.png","x":-647,"y":-800,"width":400,"height":101},
+		{"id":"8c75204896584f9c","type":"file","file":"Eventprop Maths/Pasted image 20250506142351.png","x":-660,"y":-540,"width":1420,"height":282,"color":"3"},
+		{"id":"61fa2aa27cdaf786","type":"file","file":"Eventprop Maths/Pasted image 20250506142435.png","x":-660,"y":-231,"width":1420,"height":282,"color":"3"},
+		{"id":"2729bebec7fb77f7","type":"file","file":"Eventprop Maths/Pasted image 20250506142524.png","x":-660,"y":80,"width":1420,"height":143,"color":"3"},
+		{"id":"c8c18f989bb1a081","type":"file","file":"Eventprop Maths/Pasted image 20250506142558.png","x":67,"y":433,"width":467,"height":134},
+		{"id":"ef1876f91bc7d772","type":"file","file":"Eventprop Maths/Pasted image 20250506142550.png","x":-418,"y":433,"width":468,"height":134},
+		{"id":"2a4b3f8eb0e15edf","type":"file","file":"Eventprop Maths/Pasted image 20250506141855.png","x":-35,"y":-780,"width":400,"height":162},
+		{"id":"8fc79a32f7e9dd6b","type":"text","text":"# ODE","x":-79,"y":-643,"width":129,"height":50,"color":"2"}
+	],
+	"edges":[]
+}
