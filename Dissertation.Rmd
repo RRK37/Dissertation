@@ -226,27 +226,27 @@ Building on the simplicity of the leaky integrate-and-fire (LIF) neuron, which u
 
 Mathematically, the model comprises these coupled ordinary differential equations:
 
-$$\begin{equation}
+\begin{equation}
 \frac{dt}{dv}=0.04v^2+5v+140−u+I(t),
 \label{eqn:iz1}
-\end{equation}$$
+\end{equation}
 
-$$\begin{equation}
+\begin{equation}
 \frac{du}{dt}=a(bv−u),
 \label{eqn:iz2}
-\end{equation}$$
+\end{equation}
 
 
 where v is the membrane potential (in mV), u is a membrane recovery variable accounting for K+ activation and Na+ inactivation, and I(t) is an external input current [@izhikevichSimpleModelSpiking2003]. When v reaches the peak (typically 30 mV), it and u are reset:
 
-$$\begin{equation}
+\begin{equation}
 \text{if } v \geq 30\,\text{mV}, \quad
 \begin{cases}
 v \leftarrow c \\
 u \leftarrow u + d
 \end{cases}
 \label{eqn:iz3}
-\end{equation}$$
+\end{equation}
 
 
 with (a,b,c,d) chosen to match specific neuron types. Despite its simplicity, this formulation reproduces over twenty cortical firing patterns by varying these four parameters, far surpassing the expressive capacity of the LIF model [@izhikevichWhichModelUse2004].
@@ -275,12 +275,12 @@ Backpropagation - an efficient implementation of gradient descent - is the most 
 4. Weight Update: The weights are adjusted by subtracting a fraction of their corresponding gradient, typically scaled by a learning rate. This step moves the model toward a configuration that reduces error.
 
 
-In supervised learning, the desired output is the label of the data. When a model predicts an output, the "loss" is calculated to quantify the error between the actual output and the desired output. For instance, a common way to calculate the loss is by calculating the mean squared error (MSE), where you find the sum of the squared differences between the actual output neuron values and the desired output neuron values (Equation (%%\ref{eqn:loss_mse}%%).
+In supervised learning, the desired output is the label of the data. When a model predicts an output, the "loss" is calculated to quantify the error between the actual output and the desired output. For instance, a common way to calculate the loss is by calculating the mean squared error (MSE), where you find the sum of the squared differences between the actual output neuron values and the desired output neuron values (Equation (\ref{eqn:loss_mse}).
 
-$$\begin{equation}
+\begin{equation}
 L= \frac{1}{n} \sum^{n}_{i=1}(y_{i}- \hat{y}_i)^2
 \label{eqn:loss_mse}
-\end{equation}$$
+\end{equation}
 
 To visualise how the loss of a network is minimised, let us assume that a network has 2 weights, $\theta_1$ and $\theta_2$. Figure \ref{fig:gradient_descent_3d_axis} shows the loss plotted against the weights $\theta_1$ and $\theta_2$. The optimal weight configuration occurs at the lowest point on the surface. If the weights of the neural network get initialised to the point $P$, we can find the gradient of the surface at that point which will indicate the direction of the steepest ascent. Going along the surface in the opposite direction of the gradient will follow the fastest path down the surface, minimising the loss function until the local minimum is reached where the gradient becomes 0. This process is known as *gradient descent*, backpropagation is an efficient implementation of gradient descent where the gradient of the network is calculated backwards layer by layer. 
 
@@ -294,10 +294,10 @@ To demonstrate how backpropagation works, let's consider a simplified, fully-con
 
 The highlighted neuron, $h_{1}$, is connected to all input neurons, $x_{1}$, $x_{2}$, and $x_{3}$.  Therefore $h_{1}$ is a weighted sum of all the input neurons (Equation \ref{eqn:weightedsum2}).  
 
-$$\begin{equation}
+\begin{equation}
 h_{1} = \sum_{i=1}^{3} x_{i}\times W_{i}^{1}
 \label{eqn:weightedsum2}
-\end{equation}$$
+\end{equation}
 
 An efficient way to write these weighted summations for all of the neurons in a layer is by using matrix algebra.
 
@@ -311,35 +311,35 @@ These two equations encompass all of the weighted summations that define the net
 
 Matrix multiplications perform the *forward pass* of the network - i.e. the inference. This inferred output value, $y$, is compared with the true "label" value, $y_{label}$. The comparison between the actual output and the desired output is dome by a loss function, $l()$. There are many ways of implementing the loss function, one way by finding the mean squared error (MSE):
 
-$$\begin{equation}
+\begin{equation}
 L = l(y, y_{label})
-\end{equation}$$
+\end{equation}
 
 The goal is to minimize this loss by updating the network's weights in the direction of the negative gradient. This requires computing the gradient of the loss with respect to each weight $w_i$:
 
-$$\begin{equation}
+\begin{equation}
 \frac{\partial L}{\partial w_i}
-\end{equation}$$
+\end{equation}
 
 We first calculate the gradient of the layer closest to the output, $W^{h-y}$.
 
-$$\begin{equation}
+\begin{equation}
 \frac{\partial L}{\partial W^{h-y}} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial W^{h-y}} = \frac{\partial L}{\partial y} \cdot h
-\end{equation}$$
+\end{equation}
 
 We then use the chain rule again to calculate the gradient of $L$ with respect to $W^{x-h}$.
 
-$$\begin{equation}
+\begin{equation}
 \frac{\partial L}{\partial W^{x-h}} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial h} \cdot \frac{\partial h}{\partial W^{x-h}} = \frac{\partial L}{\partial y} \cdot W^{h-y} \cdot x
-\end{equation}$$
+\end{equation}
 
 This step-by-step application of the chain rule allows the error to be propagated backward through the network, enabling efficient computation of gradients at each layer - this is the essence of backpropagation.
 
 Once the gradients are known, the weights are updated using the gradient descent rule:
 
-$$\begin{equation}
+\begin{equation}
 w_i \leftarrow w_i - \eta \frac{\partial L}{\partial w_i}
-\end{equation}$$
+\end{equation}
 
 where $\eta$ is the learning rate. A higher $\eta$ would mean faster learning but risks instability. A lower $\eta$ would ensure stable convergence to the minima, but may make the training very slow. 
 
