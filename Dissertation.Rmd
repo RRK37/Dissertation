@@ -112,7 +112,7 @@ knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
 set.seed(973)
 ```
 
-# Introduction and Context
+# Introduction
 
 Artificial Neural Networks (ANN) are computational models inspired by the brain; made up of layers of interconnected "neurons" which can learn patterns when given large amounts of data. After learning patterns, ANNs can be used to make inferences, predicting an output based on some given input. ANNs have long been used for application ranging from computer vision to financial forecasting. However the use of ANNs has surged recently, increasing fourfold since 2017, driven by the development of generative AI models like ChatGPT [@StateAI2025]. To compound this, models are growing in size and becoming more complex, consequently the global AI power consumption is increasing at an exponential rate [@kindigAIPowerConsumption]. Not only does this make models expensive to operate, but it also raises sustainability concerns. 
 
@@ -121,11 +121,14 @@ A graphics processing unit (GPU) running a large language model (LLM) consumes h
 
 ![(a) Shows a 2nd generation neuron. (b) Shows a 3rd generation neuron.](images/second_vs_third_gen_neuron.png){#fig:second_vs_third_gen fig-align=center}
 
+
 ## Problem to Solve
 
 Spiking neural networks are inherently time dependent since information is encoded in the timing of spikes. This makes them naturally capable of being applied to temporal tasks - tasks where the data evolves with time. The problem with using ANNs for temporal data is that they require a fixed input size. Though they can be tweaked to deal with unspecified length temporal data using a paradigm called "recurrence", this comes with it's downsides, such as expensive training and large memory use [citation needed]. Temporal data can come in many forms, for instance video, audio, or even stock market information. The efficiency and potential effectiveness of SNNs to process temporal information could be game changing in edge devices such as mobile phones, wearable devices, and remote sensors which have small power budgets. Large language models are revolutionising how we interact with computers, they provide a way humans to interface with machines using natural language. As a result, companies are eagerly integrating LLMs into their products and services - e.g. Siri, Raybans [citation needed]. Accurate speech recognition is therefore posing to be a highly relevant application of SNNs, playing into their strengths of temporal processing and energy efficiency. 
 
-# Spiking Neuron Model
+
+# Context
+## Spiking Neuron Model
 
 In computational neuroscience, several neuron models have been developed to simulate how neurons behave, each offering a different trade-off between biological detail and computational efficiency. This section introduces three widely used models: the Hodgkin–Huxley model, the Leaky Integrate-and-Fire (LIF) model, and the Izhikevich model.
 
@@ -135,7 +138,7 @@ Next we will discuss the Leaky Integrate-and-Fire model. To improve efficiency, 
 
 Finally, we will discuss the Izhikevich model which offers a compromise between realism and efficiency. Using just two simple differential equations, it can reproduce a wide range of spiking and bursting patterns seen in real neurons. 
 
-## Hodgkin–Huxley
+### Hodgkin–Huxley
 
 The Hodgkin-Huxley is a detailed neuron model developed in 1952 by Alan Hodgkin and Andrew Huxley, was the first to quantitatively explain how neurons generate and propagate electrical impulses by describing the flow of sodium and potassium ions through voltage-gated channels. Its success in reproducing the full waveform of electrical impulses — including rapid depolarization, repolarization, and refractory behaviour — earned Hodgkin and Huxley the 1963 Nobel Prize in Physiology or Medicine. Due to the robustness and biophysical accuracy of this model it is a logical model to consider when looking to implement biologically inspired learning computationally. 
 
@@ -188,7 +191,7 @@ Such simple first order ion flow equations characterise to high accuracy how the
 ![Response of the Hodgkin–Huxley model (blue) to a 15ms step function input current (red).](images/response_of_hh_2_spike.png){#fig:response_of_hh_2 fig-align=center}
 
 
-## Leaky Integrate-and-Fire Neuron
+### Leaky Integrate-and-Fire Neuron
 
 The leaky integrate-and-fire (LIF) neuron model is the most widely used neuronal model in SNNs due to its simplicity and efficiency which helps it scale for large networks. Simply put, the neuron receives spikes from "pre-synaptic" neurons (figure \ref{fig:second_vs_third_gen} (b)) - neurons which feed into the neuron in question; these spikes increase the "membrane potential" of the neuron - which is the voltage between the inside and outside of the neuron. When the membrane potential reaches a threshold voltage, the neuron in question fires a spike to the neurons that it is connected to, and it's membrane voltage resets to a baseline value. 
 
@@ -213,7 +216,7 @@ V[t]=H[t](1-S[t])+V_{reset}S[t]
 
 ![LIF neuron plot of $V_{mem}$.](images/lif_plot_vmem.png){#fig:lif_neuron_dynamics fig-align=center}
 
-## Izhikevich
+### Izhikevich
 
 Building on the simplicity of the leaky integrate-and-fire (LIF) neuron, which uses a single differential equation and a fixed threshold to generate spikes, the Izhikevich model strikes a balance between biological realism and computational efficiency [@izhikevichSimpleModelSpiking2003]. Eugene Izhikevich observed that Hodgkin–Huxley-type models, while highly detailed, require integrating four stiff equations per neuron, making large-scale simulation infeasible, and that simple integrate-and-fire models cannot reproduce many cortical firing [@izhikevichSimpleModelSpiking2003]. To address this, he derived a minimal two-variable model that can emulate diverse neuron behaviors—tonic spiking, bursting, chattering, and more—by tuning just four parameters [@izhikevichWhichModelUse2004].
 
@@ -246,7 +249,7 @@ with (a,b,c,d) chosen to match specific neuron types. Despite its simplicity, th
 
 Critically, Izhikevich demonstrated that this model runs in real time for tens of thousands of neurons on a single CPU core - comparable to LIF performance -while maintaining Hodgkin–Huxley-level richness in spike dynamics. Thus, by augmenting the LIF framework with a single recovery variable and non-linear voltage dependence, the Izhikevich model provides an efficient yet versatile platform for large-scale SNN training and simulation.
 
-## Neural Networks
+### Neural Networks
 
 Alone, a neuron doesn't do anything very impressive; in a network, intelligent behaviour can emerge. When many neurons are connected together, forming a neural network, they can collectively process information, detect patterns, and make decisions. Each neuron receives inputs from other neurons through connections called synapses (figure \ref{fig:simple_neural_network}). These connections have strengths, or "weights", which determine how much influence one neuron has on another; these strengths are visualised by the colour of the connections in figure \ref{fig:simple_neural_network}. By carefully adjusting these weights, the network can learn to perform complex tasks such as image recognition, speech processing, or decision-making. This idea underpins both biological neural circuits and artificial neural networks used in machine learning.
 
@@ -255,11 +258,11 @@ Alone, a neuron doesn't do anything very impressive; in a network, intelligent b
 ![Diagram of a 3 layer neural network. The weights of the synapses are visualised by the colours of the connections.](images/simple_neural_network.png){#fig:simple_neural_network fig-align=center}
 
 
-# Training Neural Networks
+## Training Neural Networks
 
 The objective of training a neural network for spoken word recognition is to construct a model that accurately maps audio input to the correct lexical output. Supervised learning remains the dominant training paradigm in this domain, consistently achieving state-of-the-art results in speech recognition tasks [@dengMachineLearningParadigms2013; @hintonDeepNeuralNetworks2012]. Supervised learning relies on labelled datasets—typically composed of audio clips annotated with their corresponding transcriptions—providing explicit guidance for the model to learn the mapping between acoustic features and linguistic units. In contrast, unsupervised learning operates on unlabelled data, requiring the model to uncover inherent structure or patterns within the input without external annotation. Next I will discuss different ways that neural networks can be trained. 
 
-## Backpropagation
+### Backpropagation
 
 Backpropagation - an efficient implementation of gradient descent - is the most effective and widely used method for training second generation artificial neural networks. It provides a systematic way to adjust the internal parameters - or weights - of a network to minimize the discrepancy between the network’s predictions and the desired outputs. An overview of the backpropagation process is as follows:
 
@@ -343,9 +346,8 @@ Repeating this backpropagation process across many training examples allows the 
 
 ![Loss function 3D surface being descended [@GradientDescentGradient2019].](images/gradient_descent_3d.png){#fig:gradient_descent_3d fig-align=center}
 
-## Spiking Neural Network Training
 
-While backpropagation has proven to be a powerful algorithm for training artificial neural networks, it cannot be directly applied to spiking neural networks (SNNs). This is primarily due to the non-differentiable nature of spike events, which prevents the straightforward calculation of gradients required for weight updates. Additionally, SNNs operate in continuous time and rely on event-based communication, introducing complex temporal dynamics that further complicate gradient-based optimization. As a result, researchers have developed a range of alternative training algorithms tailored to the unique characteristics of SNNs. In this section, we introduce several of these methods, highlighting how they address the challenges of spike-based computation and enable effective learning in spiking systems.
+While backpropagation has proven to be a powerful algorithm for training artificial neural networks, it cannot be directly applied to spiking neural networks (SNNs). This is primarily due to the non-differentiable nature of spike events, which prevents the straightforward calculation of gradients required for weight updates. Additionally, SNNs operate in continuous time and rely on event-based communication, introducing complex temporal dynamics that further complicate gradient-based optimization. As a result, researchers have developed a range of alternative training algorithms tailored to the unique characteristics of SNNs. In the following section, we introduce several of these methods, highlighting how they address the challenges of spike-based computation and enable effective learning in spiking systems.
 
 ### ANN-to-SNN Conversion
 
@@ -425,6 +427,8 @@ The input is provided into the model and it is allowed to develop under neuronal
 \mathcal{L}_{sum-exp} = -\frac{1}{N_{batch}} \sum^{N_{bathc}}_{m=1}log(\frac{exp(\int^{T}_{0} e^{-t/T}V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0}e^{-t/T}V^{m}_{k}(t) dt)})
 \label{eqn:lsumexp}
 \end{equation}
+
+
 # Methods
 
 **Marking Scheme:** A+: Expertly applied i) mathematical and statistical methods, tools and notations, ii) quantitative and computational methods, and engineering principles in completing the project. Technical content of the highest quality - could easily provide the basis for a publication or could confidently and proudly be presented to a commercial client. Work of the level of a professional engineer.
@@ -482,7 +486,7 @@ Derived the mathematics of the new eventprop scheme.
 Then I implemented this function in the code (C++).
 
 
-# Model Description 
+## Neural Network Model Description
 
 First I implemented the same model used in [@nowotnyLossShapingEnhances2025] to get SOTA performance. The model uses Leaky Integrate-and-Fire neuron model with exponential synapses. It has an input layer of 700 neurons - corresponding to the 700 channels of the cochlea model used by SHD - and 20 output neurons for digits 0 to 9 in English and German. The model has a single hidden layer which has been tested with a size of 64, 128, 256, 512, and 1024. The hidden layer was tested using feed-forward only connections and fully connected recurrent connections, showing best results with a recurrent architecture.
 
@@ -506,14 +510,45 @@ Talk about some of the main ones and why I chose Bayesian optimisation.
 
 How I implemented it. 
 
+# Results
 
+Show cool plots of spikes occurring in the network.
+
+How the resources are utilised. Memory / compute
+
+## Reproducing State-Of-The-Art Accuracy
+
+Show plot of the exp function learning
+
+Show that it reaches SOTA accuracy. 
+
+## Comparing Existing Loss Functions
+
+Show plots of how quickly the existing loss functions learn.
+
+Compare and explain.
+
+## New Loss Function Improves Training
+
+Show that it achieves SOTA accuracy too!
+
+Show that it learns faster than the previous loss functions due to the increased resilience to noise.
+
+## More Efficient Hyperparameter Optimisation Using Bayesian Optimisation
+
+Show how the Bayesian algorithm found optimal values for hyperparameters. 
+
+Prove that this is faster than brute force, which was used previously. 
 
 # Discussion
 
-Training Eventprop for larger models.
-Learnable delays for eventprop.
+Eventprop Training for larger models.
+
+Learnable delays for Eventprop.
 
 lorem ipsum
+
+## 
 
 # Conclusion
 
