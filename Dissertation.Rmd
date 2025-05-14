@@ -1,9 +1,9 @@
 ---
 title: Training Neuromorphic Neural Networks for Speech Recognition
 author:
-  - name: "Rihards Klotiņš"
+  - name: Rihards Klotiņš
   - name: "Supervisor: Dorian Florescu"
-abstract: Filler abstract - Spiking Neural Networks (SNNs), the third generation of neural networks, offer a promising alternative to traditional Artificial Neural Networks (ANNs) due to their energy efficiency, temporal processing capabilities, and potential for neuromorphic hardware implementation. Unlike ANNs, which rely on continuous-valued activations, SNNs process information through discrete spike events, closely mimicking biological neural systems. This characteristic enables them to efficiently handle sequential data, making them suitable for applications such as speech recognition, event-based vision, and edge computing. Training SNNs, however, remains a significant challenge due to the non-differentiability of spike events. While ANN-to-SNN conversion provides a workaround, it imposes computational costs and limits architectural flexibility. Direct training methods, such as Backpropagation-Through-Time (BPTT) with surrogate gradients, local learning rules, and biologically inspired approaches like e-prop and EventProp, have emerged as viable alternatives. Each method presents trade-offs in terms of computational complexity, biological plausibility, and performance. Notably, EventProp has demonstrated state-of-the-art results while reducing memory and computational overhead compared to BPTT. This work explores the theoretical advantages of SNNs, their energy-efficient processing, and recent advancements in training methodologies. It also highlights their potential impact on low-power computing applications, particularly in audio processing, where temporal encoding is crucial. By addressing current limitations and leveraging novel training strategies, SNNs could play a pivotal role in next-generation AI systems.
+abstract: FILLER ABSTRACT IGNORE - Spiking Neural Networks (SNNs), the third generation of neural networks, offer a promising alternative to traditional Artificial Neural Networks (ANNs) due to their energy efficiency, temporal processing capabilities, and potential for neuromorphic hardware implementation. Unlike ANNs, which rely on continuous-valued activations, SNNs process information through discrete spike events, closely mimicking biological neural systems. This characteristic enables them to efficiently handle sequential data, making them suitable for applications such as speech recognition, event-based vision, and edge computing. Training SNNs, however, remains a significant challenge due to the non-differentiability of spike events. While ANN-to-SNN conversion provides a workaround, it imposes computational costs and limits architectural flexibility. Direct training methods, such as Backpropagation-Through-Time (BPTT) with surrogate gradients, local learning rules, and biologically inspired approaches like e-prop and EventProp, have emerged as viable alternatives. Each method presents trade-offs in terms of computational complexity, biological plausibility, and performance. Notably, EventProp has demonstrated state-of-the-art results while reducing memory and computational overhead compared to BPTT. This work explores the theoretical advantages of SNNs, their energy-efficient processing, and recent advancements in training methodologies. It also highlights their potential impact on low-power computing applications, particularly in audio processing, where temporal encoding is crucial. By addressing current limitations and leveraging novel training strategies, SNNs could play a pivotal role in next-generation AI systems.
 date: "`r format(Sys.time(), '%d %B %Y')`"
 url: https://GitHubID.github.io/Repository/
 github-repo: GitHubID/Repository
@@ -112,25 +112,18 @@ knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
 set.seed(973)
 ```
 
-# Introduction
+# Introduction and Context
 
 Artificial Neural Networks (ANN) are computational models inspired by the brain; made up of layers of interconnected "neurons" which can learn patterns when given large amounts of data. After learning patterns, ANNs can be used to make inferences, predicting an output based on some given input. ANNs have long been used for application ranging from computer vision to financial forecasting. However the use of ANNs has surged recently, increasing fourfold since 2017, driven by the development of generative AI models like ChatGPT [@StateAI2025]. To compound this, models are growing in size and becoming more complex, consequently the global AI power consumption is increasing at an exponential rate [@kindigAIPowerConsumption]. Not only does this make models expensive to operate, but it also raises sustainability concerns. 
 
 A graphics processing unit (GPU) running a large language model (LLM) consumes hundreds of watts of power. On the other hand, the human brain processes sensory information, keeps involuntary biological systems functioning, runs its own language model, and enables conscious thought — all while using only about 20 watts. Such efficient information processing has motivated research into neuromorphic computing - a field aiming to emulate the brain’s neural architecture. Spiking Neural Networks (SNNs) are considered the third generation of neural network models [@maassNetworksSpikingNeurons1997], where ANNs are considered the second generation. Compared to neurons in ANNs, SNN neurons more closely model how biological neurons behave in the brain. For a second generation neuron, the output is a weighted sum of the inputs passed through an activation function (see figure \ref{fig:second_vs_third_gen} (a)). For a third generation neuron, the output is a spike, sometimes referred to as an event, which occurs when the voltage of a neuron surpasses a threshold (Figure \ref{fig:second_vs_third_gen} (b)), this results in neurons communicating with each other via series of spikes, which vary in timing and frequency. Since information is encoded in the timing of outputs, SNNs can inherently capture temporal patterns and dynamic behaviours in sequential data, making them inherently capable at processing tasks involving time-dependent signals, such as speech recognition, sensory processing, and event-based data streams. Moreover, it has been shown that SNNs theoretically posses higher computational power than the previous generation of ANNs [@maassComputationalPowerCircuits2004]. Spiking neurons only activate when necessary, and don't require a clock signal, enabling massive power savings. For instance, the leading neuromorphic platform TrueNorth is capable of simulating a million spiking neurons in real-time while consuming 63 mW. The equivalent network executed on a high-performance computing platform was 100–200× slower than real-time and consumed 100,000 to 300,000× more energy per synaptic event [@merollaMillionSpikingneuronIntegrated2014]. The power savings of SNNs could be game-changing in edge computing devices that run on battery or have limited power budgets - like smartphones or remote environmental sensors. On top of this, their low-latency could benefit autonomous vehicles and robotics. 
 
 
-![(a) 2nd generation neuron. (b) 3rd generation neuron.](images/second_vs_third_gen_neuron.png){#fig:second_vs_third_gen fig-align=center}
-
+![(a) Shows a 2nd generation neuron. (b) Shows a 3rd generation neuron.](images/second_vs_third_gen_neuron.png){#fig:second_vs_third_gen fig-align=center}
 
 ## Problem to Solve
 
 Spiking neural networks are inherently time dependent since information is encoded in the timing of spikes. This makes them naturally capable of being applied to temporal tasks - tasks where the data evolves with time. The problem with using ANNs for temporal data is that they require a fixed input size. Though they can be tweaked to deal with unspecified length temporal data using a paradigm called "recurrence", this comes with it's downsides, such as expensive training and large memory use [citation needed]. Temporal data can come in many forms, for instance video, audio, or even stock market information. The efficiency and potential effectiveness of SNNs to process temporal information could be game changing in edge devices such as mobile phones, wearable devices, and remote sensors which have small power budgets. Large language models are revolutionising how we interact with computers, they provide a way humans to interface with machines using natural language. As a result, companies are eagerly integrating LLMs into their products and services - e.g. Siri, Raybans [citation needed]. Accurate speech recognition is therefore posing to be a highly relevant application of SNNs, playing into their strengths of temporal processing and energy efficiency. 
-
-## Spiking Heidelberg Digits Dataset
-
-The Spiking Heidelberg digits dataset [@SpikingHeidelbergDigits] is derived from the Heidelberg Digits dataset, comprising approximately 10,000 high-quality recordings of spoken digits (0 to 9) in English and German. These recordings feature a balanced group of 12 speakers (6 males and 6 females) aged between 21 and 56 years, with a mean age of 29. The audio data is converted into spike trains using the Lauscher artificial cochlea model, resulting in 700 input channels that represent different frequency bands detected by the human ear. This transformation captures the temporal dynamics of speech, making the dataset suitable for training and evaluating SNNs that process time-dependent information.​
-
-The SSC dataset is a spiking version of the Google Speech Commands dataset, containing a large number of utterances across 35 word categories. These recordings are processed using the same Lauscher artificial cochlea model as in SHD, producing spike trains over 700 input channels [@PapersCodeSSC]. The SSC dataset encompasses a broader vocabulary and a larger speaker base, providing a more extensive benchmark for SNNs in speech recognition tasks.​
 
 # Spiking Neuron Model
 
@@ -188,11 +181,11 @@ As per equation (\ref{eqn:hh2}) the current also depends on the *conductance* of
 Such simple first order ion flow equations characterise to high accuracy how the neurons in our brain function. Figures \ref{fig:response_of_hh_1}, \ref{fig:response_of_hh_15}, and \ref{fig:response_of_hh_2} show how a neuron would react to a 5ms, 15ms, and 20ms pulse of current. While the HH neuron model has propelled our understanding of neurons due to it's biophysical precision, it's complexity - with its nonlinear differential equations and multiple gating variables - makes it computationally expensive to simulate. As a result researchers had to look elsewhere to find a model that could be used for training machines to think like humans.
 
 
-![Response of the HH model (blue) to a 5ms step function (red).](images/response_of_hh_1_spike.png){#fig:response_of_hh_1 fig-align=center}
+![Response of the Hodgkin–Huxley model (blue) to a 5ms step function input current (red).](images/response_of_hh_1_spike.png){#fig:response_of_hh_1 fig-align=center}
 
-![Response of the HH model (blue) to a 10ms step function (red).](images/response_of_hh_1.5_spike.png){#fig:response_of_hh_15 fig-align=center}
+![Response of the Hodgkin–Huxley model (blue) to a 10ms step function input current (red).](images/response_of_hh_1.5_spike.png){#fig:response_of_hh_15 fig-align=center}
 
-![Response of the HH model (blue) to a 15ms step function (red).](images/response_of_hh_2_spike.png){#fig:response_of_hh_2 fig-align=center}
+![Response of the Hodgkin–Huxley model (blue) to a 15ms step function input current (red).](images/response_of_hh_2_spike.png){#fig:response_of_hh_2 fig-align=center}
 
 
 ## Leaky Integrate-and-Fire Neuron
@@ -218,7 +211,7 @@ V[t]=H[t](1-S[t])+V_{reset}S[t]
 \end{equation}
 
 
-![LIF neuron plot of $V_{mem}$.](images/lif_plot_vmem.png){#fig:second_vs_third_gen fig-align=center}
+![LIF neuron plot of $V_{mem}$.](images/lif_plot_vmem.png){#fig:lif_neuron_dynamics fig-align=center}
 
 ## Izhikevich
 
@@ -232,7 +225,7 @@ Mathematically, the model comprises these coupled ordinary differential equation
 \end{equation}
 
 \begin{equation}
-\frac{du}{dt}=a(bv−u),
+\frac{du}{dt}=a(b*v - u),
 \label{eqn:iz2}
 \end{equation}
 
@@ -261,6 +254,7 @@ Alone, a neuron doesn't do anything very impressive; in a network, intelligent b
 
 ![Diagram of a 3 layer neural network. The weights of the synapses are visualised by the colours of the connections.](images/simple_neural_network.png){#fig:simple_neural_network fig-align=center}
 
+
 # Training Neural Networks
 
 The objective of training a neural network for spoken word recognition is to construct a model that accurately maps audio input to the correct lexical output. Supervised learning remains the dominant training paradigm in this domain, consistently achieving state-of-the-art results in speech recognition tasks [@dengMachineLearningParadigms2013; @hintonDeepNeuralNetworks2012]. Supervised learning relies on labelled datasets—typically composed of audio clips annotated with their corresponding transcriptions—providing explicit guidance for the model to learn the mapping between acoustic features and linguistic units. In contrast, unsupervised learning operates on unlabelled data, requiring the model to uncover inherent structure or patterns within the input without external annotation. Next I will discuss different ways that neural networks can be trained. 
@@ -272,65 +266,66 @@ Backpropagation - an efficient implementation of gradient descent - is the most 
 1. Forward Pass: The model receives an input and processes it through its layers, generating an output.
 2. Error Calculation: The output is compared to the desired target, and a loss function quantifies the error.
 3. Gradient Computation: The derivative of the loss function is computed with respect to each weight in the network using the chain rule of calculus.
-4. Weight Update: The weights are adjusted by subtracting a fraction of their corresponding gradient, typically scaled by a learning rate. This step moves the model toward a configuration that reduces error.
+4. Weight Update: The weights are adjusted by subtracting a fraction of the corresponding gradient, typically scaled by a learning rate. This step moves the model toward a configuration that reduces error.
 
 
 In supervised learning, the desired output is the label of the data. When a model predicts an output, the "loss" is calculated to quantify the error between the actual output and the desired output. For instance, a common way to calculate the loss is by calculating the mean squared error (MSE), where you find the sum of the squared differences between the actual output neuron values and the desired output neuron values (Equation (\ref{eqn:loss_mse}).
 
 \begin{equation}
-L= \frac{1}{n} \sum^{n}_{i=1}(y_{i}- \hat{y}_i)^2
+L= \frac{1}{n} \sum^{n}_{i=1}(\mathbf{y}_{i}- \hat{\mathbf{y}}_i)^2
 \label{eqn:loss_mse}
 \end{equation}
 
 To visualise how the loss of a network is minimised, let us assume that a network has 2 weights, $\theta_1$ and $\theta_2$. Figure \ref{fig:gradient_descent_3d_axis} shows the loss plotted against the weights $\theta_1$ and $\theta_2$. The optimal weight configuration occurs at the lowest point on the surface. If the weights of the neural network get initialised to the point $P$, we can find the gradient of the surface at that point which will indicate the direction of the steepest ascent. Going along the surface in the opposite direction of the gradient will follow the fastest path down the surface, minimising the loss function until the local minimum is reached where the gradient becomes 0. This process is known as *gradient descent*, backpropagation is an efficient implementation of gradient descent where the gradient of the network is calculated backwards layer by layer. 
 
 
-![(a) ANN neuron (b) SNN neuron](images/gradient_descent_3d_axis.png){#fig:gradient_descent_3d_axis fig-align=center}
+![The loss as a function of the parameters $\theta_1$ and $\theta_2$ plotted.](images/gradient_descent_3d_axis.png){#fig:gradient_descent_3d_axis fig-align=center}
 
 To demonstrate how backpropagation works, let's consider a simplified, fully-connected network consisting of a layer of input neurons, hidden neurons, and output neurons (Figure \ref{fig:mlp_3_layer}). Fully-connected means each neuron in a layer is connected to all neurons in the following layer. 
 
 
-![$x$ is the input vector of length 3. $h$ is the hidden layer of length 6. $W^{x-h}$ is the matrix containing the values of each of the weights connecting $x$ and $h$, thus it is of size 3 by 6. $y$ is the output vector of length 3. $W^{h-y}$ is the matrix containing the values of each of the weights connecting $h$ and $y$. thus it is of size 6 by 3.](images/mlp_3_layer.png){#fig:mlp_3_layer fig-align=center}
+![The input. $\mathbf{x}$, is a vector of length 3. $\mathbf{h}$ is a hidden layer of length 6. $\mathbf{W}^{xh}$ is the matrix containing the values of each of the weights connecting $\mathbf{x}$ and $\mathbf{h}$, thus it is of size 3 by 6. $\mathbf{y}$ is the output vector of length 3. $\mathbf{W}^{hy}$ is the matrix containing the values of each of the weights connecting $\mathbf{h}$ and $\mathbf{y}$. thus it is of size 6 by 3.](images/mlp_3_layer.png){#fig:mlp_3_layer fig-align=center}
 
-The highlighted neuron, $h_{1}$, is connected to all input neurons, $x_{1}$, $x_{2}$, and $x_{3}$.  Therefore $h_{1}$ is a weighted sum of all the input neurons (Equation \ref{eqn:weightedsum2}).  
+
+The highlighted neuron, $\mathbf{h}_{1}$, is connected to all input neurons, $\mathbf{x}_{1}$, $\mathbf{x}_{2}$, and $\mathbf{x}_{3}$.  Therefore $\mathbf{h}_{1}$ is a weighted sum of all the input neurons (Equation \ref{eqn:weightedsum2}).  
 
 \begin{equation}
-h_{1} = \sum_{i=1}^{3} x_{i}\times W_{i}^{1}
+\mathbf{h}_{1} = \sum_{i=1}^{3} \mathbf{x}_{i}\times \mathbf{W}_{i}^{1}
 \label{eqn:weightedsum2}
 \end{equation}
 
 An efficient way to write these weighted summations for all of the neurons in a layer is by using matrix algebra.
 
-$$h = x\times W^{x-h}$$
-$$y = h\times W^{h-y}$$
+$$\mathbf{h} = \mathbf{x}\times \mathbf{W}^{xh}$$
+$$\mathbf{y} = \mathbf{h}\times \mathbf{W}^{hy}$$
 
 These two equations encompass all of the weighted summations that define the network. The relationship between the weighted summation equation ( equation \ref{eqn:weighted_sum}) and the matrix multiplication representation of the network is highlighted in figure \ref{fig:matrix_of_network}. You can see that each input neuron $x_i$ is multiplied by the corresponding weight $w_{i,1}$ and summed to give $h_1$. 
 
-![Matrix multiplication visualisation.](images/matrix_of_network.png){#fig:matrix_of_network fig-align=center}
+![Matrix calculation of neural network values. The highlighted values of vector $\mathbf{x}$ are multiplied by highlighted values of the $\mathbf{W}$ matrix and summed to get $\mathbf{h}_1$.](images/matrix_of_network.png){#fig:matrix_of_network fig-align=center}
 
 
-Matrix multiplications perform the *forward pass* of the network - i.e. the inference. This inferred output value, $y$, is compared with the true "label" value, $y_{label}$. The comparison between the actual output and the desired output is dome by a loss function, $l()$. There are many ways of implementing the loss function, one way by finding the mean squared error (MSE):
+Matrix multiplications perform the *forward pass* of the network - i.e. the inference. This inferred output value, $y$, is compared with the true "label" value, $\mathbf{y}_{label}$. The comparison between the actual output and the desired output is dome by a loss function, $l()$. There are many ways of implementing the loss function, one way by finding the mean squared error (MSE):
 
 \begin{equation}
-L = l(y, y_{label})
+L = l(\mathbf{y}, \mathbf{y}_{label})
 \end{equation}
 
 The goal is to minimize this loss by updating the network's weights in the direction of the negative gradient. This requires computing the gradient of the loss with respect to each weight $w_i$:
 
 \begin{equation}
-\frac{\partial L}{\partial w_i}
+\frac{\partial L}{\partial \mathbf{W}_{ij}}
 \end{equation}
 
-We first calculate the gradient of the layer closest to the output, $W^{h-y}$.
+We first calculate the gradient of the layer closest to the output, $W^{hy}$.
 
 \begin{equation}
-\frac{\partial L}{\partial W^{h-y}} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial W^{h-y}} = \frac{\partial L}{\partial y} \cdot h
+\frac{\partial L}{\partial \mathbf{W}^{hy}} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial \mathbf{W}^{hy}} = \frac{\partial L}{\partial \mathbf{y}} \cdot \mathbf{h}
 \end{equation}
 
-We then use the chain rule again to calculate the gradient of $L$ with respect to $W^{x-h}$.
+We then use the chain rule again to calculate the gradient of $L$ with respect to $W^{xh}$.
 
 \begin{equation}
-\frac{\partial L}{\partial W^{x-h}} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial h} \cdot \frac{\partial h}{\partial W^{x-h}} = \frac{\partial L}{\partial y} \cdot W^{h-y} \cdot x
+\frac{\partial L}{\partial \mathbf{W}^{xh}} = \frac{\partial L}{\partial \mathbf{y}} \cdot \frac{\partial \mathbf{y}}{\partial \mathbf{h}} \cdot \frac{\partial \mathbf{h}}{\partial \mathbf{W}^{xh}} = \frac{\partial L}{\partial \mathbf{y}} \cdot \mathbf{W}^{hy} \cdot \mathbf{x}
 \end{equation}
 
 This step-by-step application of the chain rule allows the error to be propagated backward through the network, enabling efficient computation of gradients at each layer - this is the essence of backpropagation.
@@ -338,7 +333,7 @@ This step-by-step application of the chain rule allows the error to be propagate
 Once the gradients are known, the weights are updated using the gradient descent rule:
 
 \begin{equation}
-w_i \leftarrow w_i - \eta \frac{\partial L}{\partial w_i}
+\mathbf{w}_{ij} \leftarrow \mathbf{w}_{ij} - \eta \frac{\partial L}{\partial \mathbf{w}_{ij}}
 \end{equation}
 
 where $\eta$ is the learning rate. A higher $\eta$ would mean faster learning but risks instability. A lower $\eta$ would ensure stable convergence to the minima, but may make the training very slow. 
@@ -346,7 +341,7 @@ where $\eta$ is the learning rate. A higher $\eta$ would mean faster learning bu
 Repeating this backpropagation process across many training examples allows the network to gradually learn the desired input-output mapping by descending the loss function surface. A problem with this approach to be aware of is that the gradient descent algorithm may find a local minimum of the loss function instead of the global minimum. As a result the performance of the model may be significantly lower than it potentially could be. A popular way of dealing with this problem is by training the network several times with different random weight initialisations; if one network initialisation gets stuck in a local minima, others may not. If there are too many local minima, this approach may not be enough.
 
 
-![Loss function 3D surface being descended.](images/gradient_descent_3d.png){#fig:gradient_descent_3d fig-align=center}
+![Loss function 3D surface being descended [@GradientDescentGradient2019].](images/gradient_descent_3d.png){#fig:gradient_descent_3d fig-align=center}
 
 ## Spiking Neural Network Training
 
@@ -366,9 +361,9 @@ However, BPTT comes with two major downsides. First, it requires storing every i
 
 #### Parallelisable LIF
 
-The major bottleneck in training spiking neural networks (SNNs) using BPTT is the strictly sequential nature of classic Leaky Integrate‑and‑Fire (LIF) neurons, which update their membrane potential step by step in time. The Parallelizable LIF (ParaLIF) model overcomes this by decoupling the linear integration of inputs from the spiking (thresholding) operation and executing both across all time steps in parallel. This reorganization leverages highly optimized matrix operations on modern accelerators to deliver dramatic speed‑ups in training, without altering the fundamental membrane‑and‑spike dynamics that give SNNs their event‑driven efficiency [@arnaudyargaAcceleratingSpikingNeural2025; @yargaAcceleratingSNNTraining2023].
+The major bottleneck in training spiking neural networks (SNNs) using BPTT is the strictly sequential nature of classic Leaky Integrate‑and‑Fire (LIF) neurons, which update their membrane potential step by step in time. The Parallelizable LIF (ParaLIF) model overcomes this by decoupling the linear integration of inputs from the spiking (thresholding) operation and executing both across all time steps in parallel. This reorganization leverages highly optimized matrix operations on modern accelerators to deliver orders of magnitudes of speed‑ups in training, without altering the fundamental membrane‑and‑spike dynamics that give SNNs their event‑driven efficiency [@arnaudyargaAcceleratingSpikingNeural2025; @yargaAcceleratingSNNTraining2023].
 
-![Matrix multiplication visualisation. ](images/parallel_lif.png){#fig:parallel_lif fig-align=center}
+![A) Feedforward LIF processing flow. B) Feedforward ParaLIF processing flow. [@arnaudyargaAcceleratingSpikingNeural2025]](images/parallel_lif.png){#fig:parallel_lif fig-align=center}
 
 In a standard LIF neuron, the membrane potential $V(t)$ at time $t$ depends on its previous value $V(t−1)$ plus any new inputs, and a spike is emitted once $V$ crosses a threshold. ParaLIF rewrites this process as two separate GPU kernels. The first kernel computes, for every neuron, the entire sequence of membrane‑potential updates in one batched matrix multiplication; the second applies the threshold‐and‐reset rule simultaneously at all time points. By removing the need for “time‑step loops,” ParaLIF converts a fundamentally serial simulation into a fully vectorized parallel computation [@arnaudyargaAcceleratingSpikingNeural2025].
 
@@ -392,7 +387,7 @@ Despite its advantages, e‑prop also has notable drawbacks. First, it requires 
 Spike-timing-dependent plasticity (STDP) represents a training approach for SNNs that draws even greater inspiration from the learning rules observed in biological neurons. STDP is a biological learning rule that adjusts the strength of synaptic connections based on the precise timing of pre-synaptic and post-synaptic spikes. If a pre-synaptic neuron fires just before a post-synaptic neuron, the connection between them is strengthened. Conversely, if the order is reversed, the connection is weakened. This temporally sensitive form of Hebbian learning, often summarized by the maxim "cells that fire together, wire together," operates locally at each synapse and does not require global error signals. This makes it inherently biologically plausible, asynchronous, and capable of unsupervised learning.
 
 
-![LTP and LTD](images/stdp_ltp_ltd.png){#fig:stdp_ltp_ltd fig-align=center}
+![The change of synaptic weight plotted against the difference in timing of the pre- and post-synaptic neuron spikes, showing the long term potential and long term depression phenomena.](images/stdp_ltp_ltd.png){#fig:stdp_ltp_ltd fig-align=center}
 
 Reward-modulated STDP (R-STDP) extends the basic STDP rule by incorporating a global reward or punishment signal that modulates the synaptic weight changes. This allows the network to learn task-specific features by reinforcing connections that contribute to correct outputs and weakening those associated with errors. R-STDP bridges the gap between unsupervised STDP and supervised learning, enabling SNNs to tackle more complex, goal-oriented tasks like speech recognition. The reward signal in R-STDP can potentially be implemented using neuromodulators, further enhancing the biological plausibility of SNN training.
 
@@ -408,31 +403,21 @@ While STDP offers advantages such as biological plausibility, local learning, an
 
 A novel, accurate, and efficient training algorithm. Eventprop uses the adjoint method from optimisation theory to implement backpropagation in an efficient manner for spiking neural networks. Unlike other implementations of backpropagation for SNNs, Eventporp computes *exact* gradients to train the network, as opposed to approximate surrogate gradients typically used in BPTT. Moreover, it does so while using less compute and memory resources, reaching state-of-the-art (SOTA) performance for the SHD dataset while using 4x less memory and running 3x faster [@nowotnyLossShapingEnhances2025].  
 
-What allows Eventprop to be so efficient is its event-driven nature. Similar to the forward propagation of information in an SNN, the backward propagation of error signals in Eventprop occurs only at the precise times of recorded spikes [@wunderlichEventbasedBackpropagationCan2021], see how in figure \ref{fig:eventprop_backpropagation} the backpropagated error signals occur at the same time in the backward propagation as the spike signals do in the forward propagation. This results in significant temporal and spatial sparsity in the computation, leading to reduced computational cost and improved efficiency, especially for parallel computing architectures such as the ones in GPUs. The algorithm has been successfully implemented in GPU-enhanced neural network frameworks like GeNN and mlGeNN, making it accessible for researchers. Furthermore, Eventprop offers favourable memory requirements compared to methods like BPTT. It only necessitates the storage of neuron states at the times of spike events, rather than at every time step, which can drastically reduce memory usage, particularly for long input sequences common in speech recognition tasks. This memory efficiency makes Eventprop well-suited for implementation on resource-constrained neuromorphic hardware. Application of Eventprop on neuromorphic hardware was recently explored, with successful deployments on platforms like Intel's Loihi 2, showcasing its potential for low-power, event-based machine learning on specialized hardware [@shoesmithEventpropTrainingEfficient2025]. 
+What allows Eventprop to be so efficient is its event-driven nature. Similar to the forward propagation of information in an SNN, the backward propagation of error signals in Eventprop occurs only at the precise times of recorded spikes [@wunderlichEventbasedBackpropagationCan2021], see how in figure \ref{fig:eventprop_backpropagation} the backpropagated error signals occur at the same time in the backward propagation as the spike signals do in the forward propagation. This results in significant temporal and spatial sparsity in the computation, leading to reduced computational cost and improved efficiency, especially for parallel computing architectures such as the ones in GPUs. Furthermore, Eventprop offers favourable memory requirements compared to methods like BPTT. It only necessitates the storage of neuron states at the times of spike events, rather than at every time step, which can drastically reduce memory usage, particularly for long input sequences common in speech recognition tasks. This memory efficiency makes Eventprop well-suited for implementation on resource-constrained neuromorphic hardware, this was recently explored, with successful deployments on platforms like Intel's Loihi 2, showcasing its potential for low-power, event-based machine learning on specialized hardware [@shoesmithEventpropTrainingEfficient2025]. 
 
 
-![Spikes propagated forward according to LIF neuron dynamics. Error signals propagated backward according to the adjoint method.](images/eventprop_backpropagation.png){#fig:eventprop_backpropagation fig-align=center}
+![Spikes propagated forward according to LIF neuron dynamics. Error signals propagated backward via computing adjoint variables backwards in time.](images/eventprop_backpropagation.png){#fig:eventprop_backpropagation fig-align=center}
 
 
-Eventprop has demonstrated its effectiveness on challenging speech recognition benchmarks. It has achieved state-of-the-art performance on the Spiking Heidelberg Digits (SHD) dataset and shown good accuracy on the Spiking Speech Commands (SSC) dataset when training recurrent spiking neural networks. Notably, when compared to leading surrogate gradient-based SNN training methods, implementations of Eventprop have been shown to be significantly faster (up to 3x) and require considerably less memory (up to 4x) [@nowotnyLossShapingEnhances2025]. This efficiency makes Eventprop a promising candidate for scaling SNN training to more complex tasks and larger networks.
+Eventprop has demonstrated its effectiveness on challenging speech recognition benchmarks. It has achieved state-of-the-art performance on the Spiking Heidelberg Digits (SHD) dataset and shown good accuracy on the Spiking Speech Commands (SSC) dataset when training recurrent spiking neural networks. Notably, when compared to leading surrogate gradient-based SNN training methods, implementations of Eventprop have been shown to be significantly faster (up to 3x) and require considerably less memory (up to 4x) [@nowotnyLossShapingEnhances2025]. This efficiency allows for scaling SNN training to more complex tasks and larger models, which have yet to be explored and could potentially increase the accuracy of models further. 
 
-Eventprop's flexibility extends to its compatibility with a wider class of loss functions [@nowotnyLossShapingEnhances2025], including those commonly used with BPTT, allowing researchers to tailor the training process to specific task requirements. Furthermore, the Eventprop formalism can be extended to incorporate learnable delays within SNNs, which can be crucial for capturing temporal dependencies in sequential data like speech. 
+Eventprop's flexibility extends to its compatibility with a wider class of loss functions [@nowotnyLossShapingEnhances2025], including those commonly used with BPTT, allowing researchers to tailor the training process to specific task requirements. Furthermore, the Eventprop formalism can be extended to incorporate learnable delays within SNNs, which can be crucial for capturing temporal dependencies in sequential data like speech. It has been shown that training neuron model parameters like the membrane time constant or the synapse time constants - which control how fast the neuron voltage and current decay - can achieve good results.
 
-In summary, Eventprop is a direct training method - unlike ANN-to-SNN conversion - which enables it to train networks of architectures more suited to SNNs as, improving processing of dynamic data. Moreover, as a direct training method it doesn't require the costly conversion step. Eventprop performs more efficiently - both computationally and memory wise - than BPTT implementations like Spyx, scalling better for longer sample durations. In addition, unlike the Parallelisable-LIF implementation of BPTT - which does come with performance increases - Eventprop doesn't increase the complexity of neuronal model implementations which allows it do be implemented in neuromorphic hardware, unlocking the great potential of efficiency for SNNs. Not only does Eventprop scale better than eligibility propagation (e-prop) in terms of compute resources, it also doesn't use approximate gradients and thus achieves better performance. And finally, Eventprop is easier to train for complex tasks than spike-timing-dependent-plasticity (STDP) based approaches, requiring less computational resources and achieving better performance. For these reasons I have chosen to train the spiking neural network using Eventprop for speech recognition; it shows great potential for efficiently and accurately training larger models which can be used for efficient edge processing, such as is used on smartphones for voice recognition.
+In summary, Eventprop is a direct training method - unlike ANN-to-SNN conversion - which enables it to train networks of architectures more suited to SNNs as, improving processing of dynamic data. Moreover, as a direct training method it doesn't require the costly conversion step. Eventprop performs more efficiently - both computationally and memory wise - than BPTT implementations like Spyx, scalling better for longer sample durations. In addition, unlike the Parallelisable-LIF implementation of BPTT - which does come with performance increases - Eventprop doesn't increase the complexity of neuronal model implementations which allows it do be implemented in neuromorphic hardware, unlocking the great potential of efficiency for SNNs. Not only does Eventprop scale better than eligibility propagation (e-prop) in terms of compute resources, it also doesn't use approximate gradients and thus achieves better performance. And finally, Eventprop is easier to train for complex tasks than spike-timing-dependent-plasticity (STDP) based approaches, requiring less computational resources and achieving better performance. For these reasons I have chosen to train spiking neural networks using Eventprop for speech recognition; it shows great potential for efficiently and accurately training larger models which can be used for efficient edge processing, for instance on smartphones for voice recognition.
 
-# Improving Training Using New Loss
+#### Mathematics of Eventprop
 
-
-o Introduce why loss functions seems sub optimal
-o Provide evidence for this. I.e. early spikes shouldn't be weighted more since they may just be random
-o Implement a new one which is bell curve looking
-
-
-The current loss function is very simple. The later the spike occurs the less it contributes to the loss - exponentially. Surely spikes happening at the very beginning - when the word has barely begun to be said - shouldn't be so highly weighted? What if the loss is some kind of bell curve. where spikes in the middle contribute to the loss the most. 
-
-# Training Process
-
-Walk through how eventprop works mathematically. 
+Before exploring Eventprop deeper it is important to understand the mathematics behind it... << Explain adjoint system, lagrangian multipliers, loss functions (from first paper) >>
 
 The input is provided into the model and it is allowed to develop under neuronal dynamics. The loss is calculated according to Equation (\ref{eqn:lsumexp}). Using the adjoint method the loss is propagated backwards to find out how the timing of each event contributed to the loss so that the weights of the synapses can be adjusted accordingly.  
 
@@ -440,10 +425,61 @@ The input is provided into the model and it is allowed to develop under neuronal
 \mathcal{L}_{sum-exp} = -\frac{1}{N_{batch}} \sum^{N_{bathc}}_{m=1}log(\frac{exp(\int^{T}_{0} e^{-t/T}V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0}e^{-t/T}V^{m}_{k}(t) dt)})
 \label{eqn:lsumexp}
 \end{equation}
+# Methods
 
+**Marking Scheme:** A+: Expertly applied i) mathematical and statistical methods, tools and notations, ii) quantitative and computational methods, and engineering principles in completing the project. Technical content of the highest quality - could easily provide the basis for a publication or could confidently and proudly be presented to a commercial client. Work of the level of a professional engineer.
 
-Alternate loss function weight, Gaussian window:
-$$w(t) = exp(-\frac{(t-\mu)^2}{2\sigma^2})$$
+## Dataset used 
+
+The Spiking Heidelberg digits dataset [@SpikingHeidelbergDigits] is derived from the Heidelberg Digits dataset, comprising approximately 10,000 high-quality recordings of spoken digits (0 to 9) in English and German. These recordings feature a balanced group of 12 speakers (6 males and 6 females) aged between 21 and 56 years, with a mean age of 29. The audio data is converted into spike trains using the Lauscher artificial cochlea model, resulting in 700 input channels that represent different frequency bands detected by the human ear. This transformation captures the temporal dynamics of speech, making the dataset suitable for training and evaluating SNNs that process time-dependent information.​
+
+The SSC dataset is a spiking version of the Google Speech Commands dataset, containing a large number of utterances across 35 word categories. These recordings are processed using the same Lauscher artificial cochlea model as in SHD, producing spike trains over 700 input channels [@PapersCodeSSC]. The SSC dataset encompasses a broader vocabulary and a larger speaker base, providing a more extensive benchmark for SNNs in speech recognition tasks.​
+
+## Software Libraries
+
+What libraries there are for training a network using Eventprop.
+
+Why I chose the GeNN based library.
+
+Installing the library and tools needed for the project.
+
+## Accessing GPU Resources
+
+Creating a software development pipeline using remote GPU.
+
+Setting up GPU at my dads house in London.
+
+Setting up the network to be able to access the GPU. 
+
+Dealing with firewall issues. 
+
+## Splitting Training and Evaluation Data
+
+Why data has been split the way it has. 
+
+## Training the Network
+
+First I implemented the model used in [@nowotnyLossShapingEnhances2025] to get SOTA performance. The model uses Leaky Integrate-and-Fire neuron model with exponential synapses. It has an input layer of 700 neurons - corresponding to the 700 channels of the cochlea model used by SHD - and 20 output neurons for digits 0 to 9 in English and German. The model has a single hidden layer which has been tested with a size of 64, 128, 256, 512, and 1024. The hidden layer was tested using feed-forward only connections and fully connected recurrent connections, showing best results with a recurrent architecture.
+
+Ran tests using previously implemented loss functions. 
+Show what they look like and what they mean.
+Results reproduced. 
+
+## Deriving and implementing a Novel Loss Function
+
+The best loss function in the literature is exponential loss.
+
+This is because the spikes occurring at the end of the recording affect loss significantly more, this is due to the fact that if you move them a little bit, forward of backward in time, the decaying membrane voltage tail they leave behind gets cut off. Therefore their timing is arbitrarily far more important than other spikes, arbitrarily because the recording end time should not affect the classification. Therefore a function was chosen to reduce the weight spiles happening later have on the loss.  
+
+This highly emphasises very early spikes. Spikes that occur whilst the word has barely begun to be said. Therefore, they cannot correlate with the correct answer - i.e. they are just noise. But their significant weighting sends big gradient adjustments based on this noise. A better loss function would lower the weight of the spikes at the end, and the spikes at the *very* beginning. 
+
+Show graphs of output spikes occurring at the very beginning of the recording. 
+
+I chose a new format for the loss function, more of a bell curve shape. 
+
+Derived the mathematics of the new eventprop scheme. 
+
+Then I implemented this function in the code (C++).
 
 
 # Model Description 
@@ -453,8 +489,36 @@ First I implemented the same model used in [@nowotnyLossShapingEnhances2025] to 
 This loss was chosen as it deals with the problem highlighted by the Gedanken Experiment. 
 
 
+## Bayesian Optimisation of Hyperparameters
 
-# Bayesian optimisation of hyperparameters
+What are hyperparameters.
 
-Optimise variables like tau, random shift delay, etc. by implementing Bayesian optimisaion in software.
+The library I use for training has weak functionality for finding optimum hyperparameters.
 
+Implementing a useful feature would aid the research work to explore novel architectures, training methods and  loss functions. It would support open source software. 
+
+Talk about some of the main ones and why I chose Bayesian optimisation.
+
+-Grid search
+-Random search
+-Evolutionary Algorithms
+-Bayesian Optimization and why I chose it
+
+How I implemented it. 
+
+
+
+# Discussion
+
+Training Eventprop for larger models.
+Learnable delays for eventprop.
+
+lorem ipsum
+
+# Conclusion
+
+lorem ipsum
+
+# Project Review
+
+lorem ipsum
