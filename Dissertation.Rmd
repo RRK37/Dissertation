@@ -424,7 +424,16 @@ Before exploring Eventprop deeper it is important to understand the mathematics 
 The input is provided into the model and it is allowed to develop under neuronal dynamics. The loss is calculated according to Equation (\ref{eqn:lsumexp}). Using the adjoint method the loss is propagated backwards to find out how the timing of each event contributed to the loss so that the weights of the synapses can be adjusted accordingly.  
 
 \begin{equation}
-\mathcal{L}_{sum-exp} = -\frac{1}{N_{batch}} \sum^{N_{bathc}}_{m=1}log(\frac{exp(\int^{T}_{0} e^{-t/T}V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0}e^{-t/T}V^{m}_{k}(t) dt)})
+
+$o+(t-\mu)e^{-\frac{(t-\mu)^2}{2 \sigma ^2}}$
+
+
+$$
+\mathcal{L}_{sum-gaussian} = -\frac{1}{N_{batch}} \sum^{N_{bathc}}_{m=1}log(\frac{exp(\int^{T}_{0} o+(t-\mu)e^{-\frac{(t-\mu)^2}{2 \sigma ^2}} V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0} o+(t-\mu)e^{-\frac{(t-\mu)^2}{2 \sigma ^2}} V^{m}_{k}(t) dt)})
+$$
+
+
+
 \label{eqn:lsumexp}
 \end{equation}
 
