@@ -41,7 +41,7 @@ output:
     code_folding: show
   bookdown::word_document2: default
 ---
-
+	
 ```{r}
 #| label: DoNotModify
 #| include: false
@@ -419,25 +419,40 @@ In summary, Eventprop is a direct training method - unlike ANN-to-SNN conversion
 
 #### Mathematics of Eventprop
 
-Before exploring Eventprop deeper it is important to understand the mathematics behind it... << Explain adjoint system, lagrangian multipliers, loss functions (from first paper) >>
+At the core of Eventprop is the "adjoint method" from optimisation theory. The adjoint method is a highly efficient mathematical technique for calculating the sensitivity of a function's output to the functions parameters. In the case of optimising neural networks, the adjoint method would calculate the sensitivity of the network's loss function to changes in the synaptic weights of the network; this sensitivity information is used to optimise the algorithm. The adjoint method is very computationally efficient, the cost of computing the gradient is nearly independent of the number of parameters; unlike in methods such as finite differences, where the computational cost scales linearly  with the number of parameters. This linear scaling would become prohibitive in large networks. 
 
-The input is provided into the model and it is allowed to develop under neuronal dynamics. The loss is calculated according to Equation (\ref{eqn:lsumexp}). Using the adjoint method the loss is propagated backwards to find out how the timing of each event contributed to the loss so that the weights of the synapses can be adjusted accordingly.  
+An adjoint system to the leaky integrate-and-fire (LIF) network has been derived by [@wunderlichEventbasedBackpropagationCan2021] and is shown in figure \ref{fig:eventprop_free_dynamics}. The adjoint variables for the input current and membrane voltage are $\lambda_I$ and $\lambda_V$ respectively. They represent how sensitive the loss function is to changes to the input current or membrane voltage for a given neuron at a given time. By solving the adjoint equations backwards in time, going from $t=T$ to $t=0$, you are left with all the values of $\lambda_I$. Summing the values of $\lambda_I$ at spike events which are received by neuron $j$ and transmitted by neuron $i$, and multiplying this sum by $-\tau_{syn}$ you get the gradient of the loss function with respect to weight $w_{ji}$. This is described in equation (\ref{eqn:loss_grad_weight}).
 
-\begin{equation}
-
-$o+(t-\mu)e^{-\frac{(t-\mu)^2}{2 \sigma ^2}}$
-
-
-$$
-\mathcal{L}_{sum-gaussian} = -\frac{1}{N_{batch}} \sum^{N_{bathc}}_{m=1}log(\frac{exp(\int^{T}_{0} o+(t-\mu)e^{-\frac{(t-\mu)^2}{2 \sigma ^2}} V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0} o+(t-\mu)e^{-\frac{(t-\mu)^2}{2 \sigma ^2}} V^{m}_{k}(t) dt)})
-$$
-
-
-
-\label{eqn:lsumexp}
+\start{equation}
+\frac{d\mathcal{L}}{dw_{ji}}  = -\tau_{syn} \sum_{spikes\ from\ i} (\lambda_I)_j
+\label{eqn:loss_grad_weight}
 \end{equation}
 
+![Spikes propagated forward according to LIF neuron dynamics. Error signals are propagated backword according to the adjoint system. $\nu$ ](images/forward_backward_dynamics_evp.png){#fig:eventprop_free_dynamics fig-align=center}
 
+Figure \ref{fig:eventprop_free_dynamics} shows the maths for general loss functions; the spike time dependent loss, $l_p$, and the output neuron voltage dependent loss, $l_V$. This allows flexibility in how loss functions are defined, enabling the shaping of loss functions to suit the task. On the SHD dataset, Eventprop has achieved state-of-the-art accuracy by using a loss function based on the membrane voltage of the output neurons [@nowotnyLossShapingEnhances2025]. Initially, researchers tried using a loss function which takes the an integral of the output neuron's membrane voltage over the recording period, $\int^{T}_{0} V(t) dt$. Each neuron corresponds to a word that could have been said in the recording; according to this loss function, the output neuron with the greatest integral of membrane voltage should correspond to the word that was actually said in the recording. The loss function took this integral for each output neuron, and calculated the loss using log-softmax function, as in equation (\ref{eqn:lsum}). 
+
+
+\begin{equation}$$
+\mathcal{L}_{sum} = -\frac{1}{N_{batch}} \sum^{N_{batch}}_{m=1}log(\frac{exp(\int^{T}_{0} V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0} V^{m}_{k}(t) dt)})
+$$\label{eqn:lsum}
+\end{equation}
+
+This loss function has shown better accuracy than alternatives. One alternative is based on the timing of the first spike - the first spike to arrive at an output neuron determines how the recording is classified. Another alternative classifies the recording based on the max membrane voltage reached in the output neurons. 
+
+While it had the best accuracy, it was found that the learning rate of this sum based loss function, $\mathcal{L}_{sum}$, was very slow. When spikes reach the output neurons, the membrane voltage of the output neuron increases, and then decays based on the membrane time constant, $\tau_{mem}$. However, if spikes reach the output neurons near the end of the trial, the tail-end of the decaying voltage will be cut off, see figure \ref{fig:voltage_cutoff}. Changing the weights between neurons affects the timing of the spikes they generate; a stronger synaptic connection will increase the voltage in the post-synaptic neuron faster, and thus it will reach the threshold voltage quicker. Changing the timing of the spikes occurring near the end of the recording will cause more or less of their area to be cut-off. Therefore, their timing will affect the loss - which is the result of the output neuron membrane voltage integrated over the duration of the trial - far more than earlier spikes. This disproportionate effect that later spikes have on the loss is an arbitrary artifact of the trial duration end, and causes learning to be slower and less efficient.
+![The membrane voltage of an output neuron which receives 2 spikes at the end of the trial. Spike 1 causes the voltage to increase and then decay to 0. Spike 2 increases the voltage, but before the voltage can decay to 0, the trial ends, so the tail end of the decay is cut off.](images/output_neuron_voltage_cutoff.png){#fig:voltage_cutoff fig-align=center}
+
+To improve gradient flow, a weighted sum based loss was proposed and tested, $\mathcal{L}_{sum\_exp}$ in equation (\ref{eqn:lsumexp}). This weights earlier spikes exponentially more than the later spikes according to the $e^{-t/T}$ term. This loss function ended up achieving state-of-the-art accuracy.  
+
+\begin{equation}$$
+\mathcal{L}_{sum\_exp} = -\frac{1}{N_{batch}} \sum^{N_{batch}}_{m=1}log(\frac{exp(\int^{T}_{0} e^{-t/T}V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0}e^{-t/T}V^{m}_{k}(t) dt)})
+$$\label{eqn:lsumexp}
+\end{equation}
+
+However, I hypothesise that this loss function is still sub-optimal. While it deals with the edge case of the final spikes, it now over-emphasises early spikes. In particular, I am referring the spikes that happen instantaneously to the recording beginning, since at that time there is still no way to know what the word is, therefore they are just a result of noise. Moreover, they occur before the recurrent network's rich temporal dynamics have had a chance to play-out. I predict that this causes the rate of learning of the network to be slowed because random noise is emphasised and the actual signal is attenuated. 
+
+This is why I will explore deriving and implementing a novel loss function and Eventprop scheme. More on this in the methods section. 
 # Methods
 
 **Marking Scheme:** A+: Expertly applied i) mathematical and statistical methods, tools and notations, ii) quantitative and computational methods, and engineering principles in completing the project. Technical content of the highest quality - could easily provide the basis for a publication or could confidently and proudly be presented to a commercial client. Work of the level of a professional engineer.
@@ -446,7 +461,7 @@ $$
 
 The Spiking Heidelberg digits dataset [@SpikingHeidelbergDigits] is derived from the Heidelberg Digits dataset, comprising approximately 10,000 high-quality recordings of spoken digits (0 to 9) in English and German. These recordings feature a balanced group of 12 speakers (6 males and 6 females) aged between 21 and 56 years, with a mean age of 29. The audio data is converted into spike trains using the Lauscher artificial cochlea model, resulting in 700 input channels that represent different frequency bands detected by the human ear. This transformation captures the temporal dynamics of speech, making the dataset suitable for training and evaluating SNNs that process time-dependent information.​
 
-The SSC dataset is a spiking version of the Google Speech Commands dataset, containing a large number of utterances across 35 word categories. These recordings are processed using the same Lauscher artificial cochlea model as in SHD, producing spike trains over 700 input channels [@PapersCodeSSC]. The SSC dataset encompasses a broader vocabulary and a larger speaker base, providing a more extensive benchmark for SNNs in speech recognition tasks.​
+The SSC dataset is a spiking version of the Google Speech Commands dataset, containing a large number of utterances across 35 word categories. These recordings are processed using the same Lauscher artificial cochlea model as in SHD, producing spike trains over 700 input channels [@PapersCodeSSC]. The SSC dataset encompasses a broader vocabulary and a larger speaker base, providing a more extensive benchmark for SNNs in speech recognition tasks.​ 
 
 ## Software Libraries
 
@@ -472,13 +487,24 @@ Why data has been split the way it has.
 
 ## Training the Network
 
-First I implemented the model used in [@nowotnyLossShapingEnhances2025] to get SOTA performance. The model uses Leaky Integrate-and-Fire neuron model with exponential synapses. It has an input layer of 700 neurons - corresponding to the 700 channels of the cochlea model used by SHD - and 20 output neurons for digits 0 to 9 in English and German. The model has a single hidden layer which has been tested with a size of 64, 128, 256, 512, and 1024. The hidden layer was tested using feed-forward only connections and fully connected recurrent connections, showing best results with a recurrent architecture.
+First I implemented the model used in [@nowotnyLossShapingEnhances2025] to get state-of-the-art performance. The model uses Leaky Integrate-and-Fire neuron model with exponential synapses. It has an input layer of 700 neurons - corresponding to the 700 channels of the cochlea model used by SHD - and 20 output neurons for digits 0 to 9 in English and German. The model has a single hidden layer which has been tested with a size of 64, 128, 256, 512, and 1024. The hidden layer was tested using feed-forward only connections and fully connected recurrent connections, showing best results with a recurrent architecture. 
+
+GRAPHS OF TRAINING 
+GRAPHS OF WEIGHTS CHANGING OVER TIME?
+
+Using the hyper-parameters from [@nowotnyLossShapingEnhances2025] allowed me to reproduce the state-of-the-art accuracy found in literature. 
+
+How are the results classified in literature? 
 
 Ran tests using previously implemented loss functions. 
 Show what they look like and what they mean.
 Results reproduced. 
 
 ## Deriving and implementing a Novel Loss Function
+
+As mentioned 
+
+
 
 The best loss function in the literature is exponential loss.
 
