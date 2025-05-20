@@ -423,19 +423,21 @@ At the core of Eventprop is the "adjoint method" from optimisation theory. The a
 
 An adjoint system to the leaky integrate-and-fire (LIF) network has been derived by [@wunderlichEventbasedBackpropagationCan2021] and is shown in figure \ref{fig:eventprop_free_dynamics}. The adjoint variables for the input current and membrane voltage are $\lambda_I$ and $\lambda_V$ respectively. They represent how sensitive the loss function is to changes to the input current or membrane voltage for a given neuron at a given time. By solving the adjoint equations backwards in time, going from $t=T$ to $t=0$, you are left with all the values of $\lambda_I$. Summing the values of $\lambda_I$ at spike events which are received by neuron $j$ and transmitted by neuron $i$, and multiplying this sum by $-\tau_{syn}$ you get the gradient of the loss function with respect to weight $w_{ji}$. This is described in equation (\ref{eqn:loss_grad_weight}).
 
-\start{equation}
+
+\begin{equation}
 \frac{d\mathcal{L}}{dw_{ji}}  = -\tau_{syn} \sum_{spikes\ from\ i} (\lambda_I)_j
 \label{eqn:loss_grad_weight}
 \end{equation}
+
 
 ![Spikes propagated forward according to LIF neuron dynamics. Error signals are propagated backword according to the adjoint system. $\nu$ ](images/forward_backward_dynamics_evp.png){#fig:eventprop_free_dynamics fig-align=center}
 
 Figure \ref{fig:eventprop_free_dynamics} shows the maths for general loss functions; the spike time dependent loss, $l_p$, and the output neuron voltage dependent loss, $l_V$. This allows flexibility in how loss functions are defined, enabling the shaping of loss functions to suit the task. On the SHD dataset, Eventprop has achieved state-of-the-art accuracy by using a loss function based on the membrane voltage of the output neurons [@nowotnyLossShapingEnhances2025]. Initially, researchers tried using a loss function which takes the an integral of the output neuron's membrane voltage over the recording period, $\int^{T}_{0} V(t) dt$. Each neuron corresponds to a word that could have been said in the recording; according to this loss function, the output neuron with the greatest integral of membrane voltage should correspond to the word that was actually said in the recording. The loss function took this integral for each output neuron, and calculated the loss using log-softmax function, as in equation (\ref{eqn:lsum}). 
 
 
-\begin{equation}$$
+\begin{equation}
 \mathcal{L}_{sum} = -\frac{1}{N_{batch}} \sum^{N_{batch}}_{m=1}log(\frac{exp(\int^{T}_{0} V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0} V^{m}_{k}(t) dt)})
-$$\label{eqn:lsum}
+\label{eqn:lsum}
 \end{equation}
 
 This loss function has shown better accuracy than alternatives. One alternative is based on the timing of the first spike - the first spike to arrive at an output neuron determines how the recording is classified. Another alternative classifies the recording based on the max membrane voltage reached in the output neurons. 
@@ -445,9 +447,9 @@ While it had the best accuracy, it was found that the learning rate of this sum 
 
 To improve gradient flow, a weighted sum based loss was proposed and tested, $\mathcal{L}_{sum\_exp}$ in equation (\ref{eqn:lsumexp}). This weights earlier spikes exponentially more than the later spikes according to the $e^{-t/T}$ term. This loss function ended up achieving state-of-the-art accuracy.  
 
-\begin{equation}$$
+\begin{equation}
 \mathcal{L}_{sum\_exp} = -\frac{1}{N_{batch}} \sum^{N_{batch}}_{m=1}log(\frac{exp(\int^{T}_{0} e^{-t/T}V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0}e^{-t/T}V^{m}_{k}(t) dt)})
-$$\label{eqn:lsumexp}
+\label{eqn:lsumexp}
 \end{equation}
 
 However, I hypothesise that this loss function is still sub-optimal. While it deals with the edge case of the final spikes, it now over-emphasises early spikes. In particular, I am referring the spikes that happen instantaneously to the recording beginning, since at that time there is still no way to know what the word is, therefore they are just a result of noise. Moreover, they occur before the recurrent network's rich temporal dynamics have had a chance to play-out. I predict that this causes the rate of learning of the network to be slowed because random noise is emphasised and the actual signal is attenuated. 
@@ -459,11 +461,17 @@ This is why I will explore deriving and implementing a novel loss function and E
 
 ## Dataset used 
 
-The Spiking Heidelberg digits dataset [@SpikingHeidelbergDigits] is derived from the Heidelberg Digits dataset, comprising approximately 10,000 high-quality recordings of spoken digits (0 to 9) in English and German. These recordings feature a balanced group of 12 speakers (6 males and 6 females) aged between 21 and 56 years, with a mean age of 29. The audio data is converted into spike trains using the Lauscher artificial cochlea model, resulting in 700 input channels that represent different frequency bands detected by the human ear. This transformation captures the temporal dynamics of speech, making the dataset suitable for training and evaluating SNNs that process time-dependent information.​
+The Spiking Heidelberg digits dataset [@SpikingHeidelbergDigits] is derived from the Heidelberg Digits dataset, comprising approximately 10,000 high-quality recordings of spoken digits (0 to 9) in English and German. These recordings feature a balanced group of 12 speakers (6 males and 6 females) aged between 21 and 56 years, with a mean age of 29. The audio data is converted into spike trains using the Lauscher artificial cochlea model, resulting in 700 input channels that represent different frequency bands detected by the human ear. This transformation captures the temporal dynamics of speech, making the dataset suitable for training and evaluating SNNs that process time-dependent information.
 
 The SSC dataset is a spiking version of the Google Speech Commands dataset, containing a large number of utterances across 35 word categories. These recordings are processed using the same Lauscher artificial cochlea model as in SHD, producing spike trains over 700 input channels [@PapersCodeSSC]. The SSC dataset encompasses a broader vocabulary and a larger speaker base, providing a more extensive benchmark for SNNs in speech recognition tasks.​ 
 
+The TIMIT Acoustic-Phonetic Continuous Speech Corpus is a dataset containing a diverse group of English speakers reading phonetically-rich sentences with detailed transcription [@garofoloTIMITAcousticPhoneticContinuous1993]. A downside of TIMIT is that it is not free, needing a license to be used. LibriSpeech ASR Corpus is a very large-scale dataset containing 1,000 hours of speech derived from audio books [@panayotovLibrispeechASRCorpus2015]. While it is free, the fact that it is read out loud means it may not generalise well to spontaneous conversational speech, such as might be used when engaging with a large language model through your smartphone or smart-glasses. Another prevelant speech dataset is the TIDIGITS dataset, containing recordings of digits spoken in sequence [@garyleonardTIDIGITS1993], making it more complex than the SHD dataset which contains recordings of single digits being spoken. However, a major issue with all of these alternatives to SHD and SSC is that they aren't inherently spike-based, this would cause less fair comparisons between competing training algorithms as researchers might have differing ways of converting the datasets to spiking datasets. This is why the SHD and SSC datasets are the most prevalent in the research of applying spiking neural networks to speech recognition, and it is why I will use them. 
+
 ## Software Libraries
+
+There are multiple libraries I considered which implement Eventprop functionality. Their GitHub repositories were "timowunderlich/eventprop", "tnowotny/genn_eventprop", and "lolemacs/pytorch-eventprop". 
+
+"timowunderlich/eventprop" 
 
 What libraries there are for training a network using Eventprop.
 
@@ -553,11 +561,17 @@ How the resources are utilised. Memory / compute
 
 ## Reproducing State-Of-The-Art Accuracy
 
+Before experimenting with novel loss functions I used the current best loss function found in the literature for Eventprop, $\mathcal{L}_{sum\_exp}$. To replicate the state-of-the-art results I ensure that the hyper-parameters of the network and training scheme parameters were set up correctly. To do this the parameters in the literature had to be matched to the variables in the software. 
+
+I used the development pipeline I had set up to run the training program, and got the correct evaluation value of 92% stated in literature. Putting me on the SHD benchmark leaderboard. 
+
 Show plot of the exp function learning
 
 Show that it reaches SOTA accuracy. 
 
 ## Comparing Existing Loss Functions
+
+I then implemented other loss functions found in literature and got the following results. This shows that the exp loss function is best. 
 
 Show plots of how quickly the existing loss functions learn.
 
@@ -583,7 +597,6 @@ Learnable delays for Eventprop.
 
 lorem ipsum
 
-## 
 
 # Conclusion
 
