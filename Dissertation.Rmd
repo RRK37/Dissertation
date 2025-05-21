@@ -452,9 +452,13 @@ To improve gradient flow, a weighted sum based loss was proposed and tested, $\m
 \label{eqn:lsumexp}
 \end{equation}
 
-However, I hypothesise that this loss function is still sub-optimal. While it deals with the edge case of the final spikes, it now over-emphasises early spikes. In particular, I am referring the spikes that happen instantaneously to the recording beginning, since at that time there is still no way to know what the word is, therefore they are just a result of noise. Moreover, they occur before the recurrent network's rich temporal dynamics have had a chance to play-out. I predict that this causes the rate of learning of the network to be slowed because random noise is emphasised and the actual signal is attenuated. 
+However, I hypothesise that this loss function is still sub-optimal. While it deals with the edge case of the final spikes, it now over-emphasises early spikes. In particular, I am referring the spikes that happen instantaneously to the recording beginning, since at that time there is still no way to know what the word is, therefore they are just a result of noise. Moreover, they occur before the recurrent network's rich temporal dynamics have had a chance to play-out. I predict that this causes the rate of learning of the network to be slowed because random noise is emphasised and the actual signal is attenuated. It can be seen in figure \ref{fig:spikes_hidden_to_output} that there are spikes which reach the output neurons almost instantly. 
+
+![A raster plot of the spikes transmitted to the output neurons of the network from the hidden neurons. There is a large number if spikes very early on.](images/spikes_hidden_to_output.png){#fig:spikes_hidden_to_output fig-align=center}
+
 
 This is why I will explore deriving and implementing a novel loss function and Eventprop scheme. More on this in the methods section. 
+
 # Methods
 
 **Marking Scheme:** A+: Expertly applied i) mathematical and statistical methods, tools and notations, ii) quantitative and computational methods, and engineering principles in completing the project. Technical content of the highest quality - could easily provide the basis for a publication or could confidently and proudly be presented to a commercial client. Work of the level of a professional engineer.
@@ -469,17 +473,16 @@ The TIMIT Acoustic-Phonetic Continuous Speech Corpus is a dataset containing a d
 
 ## Software Libraries
 
-There are multiple libraries I considered which implement Eventprop functionality. Their GitHub repositories were "timowunderlich/eventprop", "tnowotny/genn_eventprop", and "lolemacs/pytorch-eventprop". 
+There are several libraries which implement core Eventprop functionality. The first library I considered [@savareseLolemacsPytorcheventprop2024] was based on PyTorch, which is a very widely use machine learning framework that I am familiar with, with significant GPU optimisations. However, PyTorch is mainly used for ANNs, therefore it is not as optimised for SNNs; this fact could cause long training times, delaying development. 
 
-"timowunderlich/eventprop" 
+Next I evaluated a C++ based library implemented by one of the authors of the paper which first introduced Eventprop [@https://github.com/timowunderlich/eventprop]. Being implemented in C++ - a low level programming language - means it has very little computational overhead, enabling it to run very fast. However, though the code can run fast on CPUs, it is not optimised to run on GPUs. Since neural networks calculate many things in parallel, using a CPU to run training would be very slow compared to running training on a GPU. To be optimised for GPUs, the C++ code would need to utilise a software extension like CUDA - an industry standard platform for accelerating computation using Nvidia GPUs. 
 
-What libraries there are for training a network using Eventprop.
+The library that I chose to use for implementing and training neural networks [@nowotnyTnowotnyGenn_eventprop2025] uses the GeNN - GPU enhanced Neuronal Network - framework to accelerate spiking neural networks using CUDA. The GeNN framework, developed by a professor at University of Surrey, is highly optimised for GPUs, allowing much faster development and testing of models and algorithms. Moreover, it is the library that was used to achieve state-of-the-art accuracy on the SHD dataset, and has functionality to use the previously discussed $\mathcal{L}_{sum\_exp}$ function. 
 
-Why I chose the GeNN based library.
-
-Installing the library and tools needed for the project.
-
+Having chosen the library I will use to implement Eventprop, I installed a Linux environment in which I will develop and run code. I chose to use Linux due to the availability of software tools, and previous professional experience in developing artificial intelligence software on Linux. Next I read the documentation of the Eventprop library to understand the required packages, such as CUDA, compatible C++ compilers, and more. Having installed the necessary packages, I  set up other environmental setting such as the Linux \$PATH\$. 
 ## Accessing GPU Resources
+
+Having set up the environment 
 
 Creating a software development pipeline using remote GPU.
 
@@ -488,6 +491,10 @@ Setting up GPU at my dads house in London.
 Setting up the network to be able to access the GPU. 
 
 Dealing with firewall issues. 
+
+Neural networks rely on computing many simple equations in parallel, this makes them well suited for being accelerated by a GPU. 
+
+
 
 ## Splitting Training and Evaluation Data
 
@@ -510,19 +517,109 @@ Results reproduced.
 
 ## Deriving and implementing a Novel Loss Function
 
-As mentioned 
+The current best loss function for Eventprop in the literature has a decreasing exponential weighting for the voltage at the output neurons. The mathematical representation of the exponential weighting can be observed in equation (\ref{eqn:exp_sum_simple}). This kind of weighting reduces the arbitrarily exaggerated impact that the spikes near the end of the recording have on the loss, improving gradient descent. However, a side-effect of this function is that it emphasises the spikes which occur instantaneously. These instantaneous spikes occur while the word in question has barely begun to be said, a judgement on the word at that point would simply be a guess which would not correlate with the ground truth, hence these instantaneous spikes are simply noise. As electronic engineers know from signal processing, *noise is something that should be attenuated not amplified*. 
+
+\begin{equation}
+$$ V_{exp\_sum}(t) = e^{-t/T}\ V(t) $$
+\label{eqn:exp_sum_simple}}
+\end{equation}
+
+
+An improved loss function would take what the exponential loss function did well - fixing the issue of spikes near the end being arbitrarily emphasised - while also attenuating spikes occurring instantaneously. It should be a continuous function, so that it can be differentiated for backpropagation. I first considered the Gaussian function, famously known as the "bell curve". It will weight early and late spikes lower, while keeping the spikes in the middle weighted high. 
+
+\begin{equation}
+$$ V_{bell}(t) = a \exp{\left( \frac{( -t/T) - b)^2} {2c^2}\right)}\ V(t) $$
+\label{eqn:bell_sum_simple}}
+\end{equation}
+
+The exponential weighting and bell curve weightings from equations (\ref{eqn:exp_sum_simple}) and (\ref{eqn:nell_sum_simple}) are plotted in figure \ref{fig:exp_vs_bell_plot}. The term $-t/T$ is a ratio of the current simulation time and the total simulation duration, therefore it exists between 0 (the beginning of the simulation) and 1 (the end of the simulation).
+ 
+
+
+![Plot of the weightings of the exponential function (blue) and the Gaussian (blue) against -t/T from 0 to 1.](images/plot_bell_vs_exp.png){#fig:exp_vs_bell_plot fig-align=center}
 
 
 
-The best loss function in the literature is exponential loss.
+%% ==Axis labels -t/T== %%
 
-This is because the spikes occurring at the end of the recording affect loss significantly more, this is due to the fact that if you move them a little bit, forward of backward in time, the decaying membrane voltage tail they leave behind gets cut off. Therefore their timing is arbitrarily far more important than other spikes, arbitrarily because the recording end time should not affect the classification. Therefore a function was chosen to reduce the weight spiles happening later have on the loss.  
+The inefficiencies of training caused by very early and very late spikes are of a different nature, therefore it would be beneficial to enable the weighting function to be asymmetrical. This would allow scaling early spikes differently to late spikes. To do this I modified the standard Gaussian function, scaling it by $-t/T$, this gave it a distinct shape, rising quickly earlier in the recording, and fading slowly near the end (figure \ref{fig:exp_vs_gaus_plot}). 
 
-This highly emphasises very early spikes. Spikes that occur whilst the word has barely begun to be said. Therefore, they cannot correlate with the correct answer - i.e. they are just noise. But their significant weighting sends big gradient adjustments based on this noise. A better loss function would lower the weight of the spikes at the end, and the spikes at the *very* beginning. 
+\begin{equation}
+$$ V_{gausian\_mod}(t) = a( -t/T)  \exp{\left( \frac{( -t/T)^2} {2c^2}\right)}\ V(t) $$
+\label{eqn:gaus_sum_simple}}
+\end{equation}
+
+
+
+![Plot of the weightings of the exponential function (blue) and the Gaussian (blue) against -t/T from 0 to 1.](images/plot_gaus_vs_exp.png){#fig:exp_vs_gaus_plot fig-align=center}
+
+
+%% ==Axis labels -t/T== %%
+
+
+ Implementing this modified Gaussian function in the log-softmax form give the new loss function, $\mathcal{L}_{sum\_gaus}$ in equation (\ref{eqn:lif3}). 
+
+\begin{equation}
+$$\mathcal{L}_{sum\_gaus} = -\frac{1}{N_{batch}} \sum^{N_{batch}}_{m=1}log(\frac{exp(\int^{T}_{0} e^{-t/T}V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0}e^{-t/T}V^{m}_{k}(t) dt)})
+$$\label{eqn:lsumgaus}
+\end{equation}
+
+
+As discussed before, the gradient for each weight is backpropagates by solving for the adjoint variables - $\lambda_V$ and $\lambda_I$ - backwards in time. These adjoint variables represent how sensitive the loss is to changes in the state variables - $V$ and $I$ - at a given neuron at a given time. The dynamic properties of these adjoint variables are given by a system of ordinary differential equations (ODEs) - equations (\ref{eqn:lambda_ode}) and (\ref{eqn:lambda_gradient_ode}). Solving for $\tilde{\lambda}_{I,j}(t)$ - which is the adjoint variable for the current summed over an entire batch (equation (\ref{eqn:lambda_i_tilde}))  - allows for finding the gradient of the loss function with respect to the weight $w_{ji}$ - which connect neurons $j$ and $i$ - as is described in equation (\ref{eqn:derivative_of_loss}). 
+
+The following equations are for a general loss function 
+
+
+\begin{equation}
+$$
+\tau_{\text{syn}} \tilde{\lambda}_{I,j}^{\prime} = -\tilde{\lambda}_{I,j} + \tilde{\lambda}_{V,j},
+$$
+
+\label{eqn:lambda_ode}
+\end{equation}
+
+
+\begin{equation}
+$$
+\tau_{\text{mem}} \tilde{\lambda}_{V,j}^{\prime} = -\tilde{\lambda}_{V,j} - \sum_n \frac{\partial F}{\partial \left(\int l_V^n dt\right)} \frac{\partial l_V^n}{\partial V_j}
+$$
+\label{eqn:lambda_gradient_ode}
+\end{equation}
+
+\begin{equation}
+$$
+\begin{align*}
+\frac{d\mathcal{L}_F}{dw_{ji}} &= -\tau_{\text{syn}} \sum_{t \in t_{\text{spike}}(i)} \tilde{\lambda}_{I,j}(t)
+\end{align*}
+$$
+\label{eqn:derivative_of_loss}
+\end{equation}
+
+
+Where:
+
+\begin{equation}
+$$
+\tilde{\lambda}_{I,j} := \sum_n \frac{\partial F}{\partial \left(\int l_V^n dt\right)} \lambda_{I,j}^n(t) 
+$$
+\label{eqn:lambda_i_tilde}
+\end{equation}
+
+and
+
+\begin{equation}
+$$
+\tilde{\lambda}_{V,j} := \sum_n \frac{\partial F}{\partial \left(\int l_V^n dt\right)} \lambda_{V,j}^n 
+$$
+\label{eqn:lambda_v_tilde}
+\end{equation}
+
+
+
+
+
 
 Show graphs of output spikes occurring at the very beginning of the recording. 
-
-I chose a new format for the loss function, more of a bell curve shape. 
 
 Derived the mathematics of the new eventprop scheme. 
 
@@ -536,22 +633,6 @@ First I implemented the same model used in [@nowotnyLossShapingEnhances2025] to 
 This loss was chosen as it deals with the problem highlighted by the Gedanken Experiment. 
 
 
-## Bayesian Optimisation of Hyperparameters
-
-What are hyperparameters.
-
-The library I use for training has weak functionality for finding optimum hyperparameters.
-
-Implementing a useful feature would aid the research work to explore novel architectures, training methods and  loss functions. It would support open source software. 
-
-Talk about some of the main ones and why I chose Bayesian optimisation.
-
--Grid search
--Random search
--Evolutionary Algorithms
--Bayesian Optimization and why I chose it
-
-How I implemented it. 
 
 # Results
 
@@ -582,12 +663,6 @@ Compare and explain.
 Show that it achieves SOTA accuracy too!
 
 Show that it learns faster than the previous loss functions due to the increased resilience to noise.
-
-## More Efficient Hyperparameter Optimisation Using Bayesian Optimisation
-
-Show how the Bayesian algorithm found optimal values for hyperparameters. 
-
-Prove that this is faster than brute force, which was used previously. 
 
 # Discussion
 
