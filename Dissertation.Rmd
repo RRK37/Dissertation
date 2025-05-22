@@ -439,38 +439,6 @@ An adjoint system to the leaky integrate-and-fire (LIF) network has been derived
 ![Spikes propagated forward according to LIF neuron dynamics. Error signals are propagated backword according to the adjoint system. $\nu$ ](images/forward_backward_dynamics_evp.png){#fig:eventprop_free_dynamics fig-align=center}
 
 
-\documentclass{article}
-\usepackage{amsmath}
-\usepackage{array}
-\usepackage{booktabs} % For better horizontal lines
-
-\begin{document}
-
-\begin{table}[h!]
-\centering
-\caption{Model Equations} % Optional: Add a caption to your table
-\begin{tabular}{@{}lll@{}}
-\toprule
-\textbf{Free dynamics} & \textbf{Transition condition} & \textbf{Jumps at transition} \\
-\midrule
-\multicolumn{3}{l}{\textbf{Forward:}} \\
-(i) $\tau_{\text{mem}}\dot{V} = -V + I$ & $(V)_n - \vartheta = 0,$ & $(V^+)_n = 0$ \\
-& $(\dot{V})_n \neq 0$ & $I^+ = I^- + W e_n$ \\
-(ii) $\tau_{\text{syn}}\dot{I} = -I$ & & \\
-\midrule
-\multicolumn{3}{l}{\textbf{Backward:}} \\
-(iii) $\tau_{\text{mem}}\lambda'_V = -\lambda_V - \frac{\partial l_V}{\partial V}$ & $t - t_k = 0$ & (v) $(\lambda_V^-)_{n(k)} = (\lambda_V^+)_{n(k)} + \frac{1}{\tau_{\text{mem}}(V^-)_{n(k)} - \vartheta} \left[ \frac{\partial (\lambda_V^+)}{\partial t_k} \right]_{n(k)}$ \\
-& & \qquad $+ (W^T (\lambda_I^+ - \lambda_I))_{n(k)} + I_V^+ - I_V^-$ \\
-(iv) $\tau_{\text{syn}}\lambda'_I = -\lambda_I + \lambda_V$ & & \\
-\midrule
-\multicolumn{3}{@{}l@{}}{\textbf{Gradient of the loss:}(vi) $\frac{dC}{dw_{ij}} = -\tau_{\text{syn}} \sum_{t \in t_{\text{spike}}(i)} \lambda_{I,j}(t)$} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\end{document}
-
-
 
 
 Figure \ref{fig:eventprop_free_dynamics} shows the maths for general loss functions; the spike time dependent loss, $l_p$, and the output neuron voltage dependent loss, $l_V$. This allows flexibility in how loss functions are defined, enabling the shaping of loss functions to suit the task. On the SHD dataset, Eventprop has achieved state-of-the-art accuracy by using a loss function based on the membrane voltage of the output neurons [@nowotnyLossShapingEnhances2025]. Initially, researchers tried using a loss function which takes the an integral of the output neuron's membrane voltage over the recording period, $\int^{T}_{0} V(t) dt$. Each neuron corresponds to a word that could have been said in the recording; according to this loss function, the output neuron with the greatest integral of membrane voltage should correspond to the word that was actually said in the recording. The loss function took this integral for each output neuron, and calculated the loss using log-softmax function, as in equation (\ref{eqn:lsum}). 
@@ -574,7 +542,7 @@ The exponential weighting and bell curve weightings from equations (\ref{eqn:exp
  
 
 
-![Plot of the weightings of the exponential function (blue) and the Gaussian (blue) against -t/T from 0 to 1.](images/plot_bell_vs_exp.png){#fig:exp_vs_bell_plot fig-align=center width="300px"}
+![Plot of the weightings of the exponential function (red) and the bell curve function (blue) against -t/T from 0 to 1.](images/plot_bell_vs_exp.png){#fig:exp_vs_bell_plot fig-align=center width="500px"}
 
 
 The inefficiencies of training caused by very early and very late spikes are of a different nature, therefore it would be beneficial to enable the weighting function to be asymmetrical. This would allow scaling early spikes differently to late spikes. To do this I modified the standard Gaussian function, scaling it by $-t/T$, this gave it a distinct shape, rising quickly earlier in the recording, and fading slowly near the end (figure \ref{fig:exp_vs_gaus_plot}). 
@@ -586,7 +554,7 @@ V_{gausian\_mod}(t) = a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \righ
 
 
 
-![Plot of the weightings of the exponential function (blue) and the Gaussian (blue) against -t/T from 0 to 1.](images/plot_gaus_vs_exp.png){#fig:exp_vs_gaus_plot fig-align=center width="300px"}
+![Plot of the weightings of the exponential function (red) and the Gaussian based function (green) against -t/T from 0 to 1.](images/plot_gaus_vs_exp.png){#fig:exp_vs_gaus_plot fig-align=center width="500px"}
 
 
 	
@@ -760,7 +728,7 @@ This defines how the adjoint variables, $\lambda_V$ and $\lambda_I$, dynamically
 The derived mathematics need to be actualised in code. To run efficiently, I implemented this maths in C++. 
 
 
-![Code to implement the mathematics of the Eventprop scheme for a Gaussian based loss.](images/code_of_evp.png){#fig:code_of_evp fig-align=center}
+![Code to implement the mathematics of the Eventprop scheme for a Gaussian based loss.](images/code_of_evp.png){#fig:code_of_evp fig-align=center width="600px"}
 
 
 ## Neural Network Model Description

@@ -14,23 +14,23 @@
 \contentsline {subsubsection}{\numberline {2.2.2}ANN-to-SNN Conversion}{15}{subsubsection.2.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.3}Backpropagation-Through-Time}{15}{subsubsection.2.2.3}%
 \contentsline {paragraph}{Parallelisable LIF}{16}{section*.13}%
-\contentsline {subsubsection}{\numberline {2.2.4}Eligibility Propagation}{16}{subsubsection.2.2.4}%
+\contentsline {subsubsection}{\numberline {2.2.4}Eligibility Propagation}{17}{subsubsection.2.2.4}%
 \contentsline {subsubsection}{\numberline {2.2.5}Spike-Time-Dependent-Plasticity}{17}{subsubsection.2.2.5}%
 \contentsline {subsubsection}{\numberline {2.2.6}Eventprop}{19}{subsubsection.2.2.6}%
 \contentsline {paragraph}{Mathematics of Eventprop}{20}{section*.17}%
 \contentsline {section}{\numberline {3}Methods}{22}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Dataset used}{22}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Software Libraries}{23}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Splitting Training and Evaluation Data}{24}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Training the Network}{24}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.3}Splitting Training and Evaluation Data}{23}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Training the Network}{23}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Deriving an Improved Novel Loss Function and Eventprop Scheme}{24}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Implementing the Novel Eventprop Scheme in Software}{29}{subsection.3.6}%
-\contentsline {subsection}{\numberline {3.7}Neural Network Model Description}{29}{subsection.3.7}%
-\contentsline {section}{\numberline {4}Results}{31}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Reproducing State-Of-The-Art Accuracy}{31}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Comparing Existing Loss Functions}{31}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}New Loss Function Improves Training}{31}{subsection.4.3}%
-\contentsline {section}{\numberline {5}Discussion}{31}{section.5}%
-\contentsline {section}{\numberline {6}Conclusion}{31}{section.6}%
-\contentsline {section}{\numberline {7}Project Review}{32}{section.7}%
+\contentsline {subsection}{\numberline {3.6}Implementing the Novel Eventprop Scheme in Software}{28}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Neural Network Model Description}{28}{subsection.3.7}%
+\contentsline {section}{\numberline {4}Results}{30}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Reproducing State-Of-The-Art Accuracy}{30}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Comparing Existing Loss Functions}{30}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}New Loss Function Improves Training}{30}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Discussion}{30}{section.5}%
+\contentsline {section}{\numberline {6}Conclusion}{30}{section.6}%
+\contentsline {section}{\numberline {7}Project Review}{31}{section.7}%
 \xpginauxfilefalse 
