@@ -461,7 +461,6 @@ This is why I will explore deriving and implementing a novel loss function and E
 
 # Methods
 
-**Marking Scheme:** A+: Expertly applied i) mathematical and statistical methods, tools and notations, ii) quantitative and computational methods, and engineering principles in completing the project. Technical content of the highest quality - could easily provide the basis for a publication or could confidently and proudly be presented to a commercial client. Work of the level of a professional engineer.
 
 ## Dataset used 
 
@@ -520,16 +519,16 @@ Results reproduced.
 The current best loss function for Eventprop in the literature has a decreasing exponential weighting for the voltage at the output neurons. The mathematical representation of the exponential weighting can be observed in equation (\ref{eqn:exp_sum_simple}). This kind of weighting reduces the arbitrarily exaggerated impact that the spikes near the end of the recording have on the loss, improving gradient descent. However, a side-effect of this function is that it emphasises the spikes which occur instantaneously. These instantaneous spikes occur while the word in question has barely begun to be said, a judgement on the word at that point would simply be a guess which would not correlate with the ground truth, hence these instantaneous spikes are simply noise. As electronic engineers know from signal processing, *noise is something that should be attenuated not amplified*. 
 
 \begin{equation}
-$$ V_{exp\_sum}(t) = e^{-t/T}\ V(t) $$
-\label{eqn:exp_sum_simple}}
+V_{exp\_sum}(t) = e^{-t/T}\ V(t) 
+\label{eqn:exp_sum_simple}
 \end{equation}
 
 
 An improved loss function would take what the exponential loss function did well - fixing the issue of spikes near the end being arbitrarily emphasised - while also attenuating spikes occurring instantaneously. It should be a continuous function, so that it can be differentiated for backpropagation. I first considered the Gaussian function, famously known as the "bell curve". It will weight early and late spikes lower, while keeping the spikes in the middle weighted high. 
 
 \begin{equation}
-$$ V_{bell}(t) = a \exp{\left( \frac{( -t/T) - b)^2} {2c^2}\right)}\ V(t) $$
-\label{eqn:bell_sum_simple}}
+V_{bell}(t) = a \exp{\left( \frac{( -t/T) - b)^2} {2c^2}\right)}\ V(t)
+\label{eqn:bell_sum_simple}
 \end{equation}
 
 The exponential weighting and bell curve weightings from equations (\ref{eqn:exp_sum_simple}) and (\ref{eqn:nell_sum_simple}) are plotted in figure \ref{fig:exp_vs_bell_plot}. The term $-t/T$ is a ratio of the current simulation time and the total simulation duration, therefore it exists between 0 (the beginning of the simulation) and 1 (the end of the simulation).
@@ -539,14 +538,11 @@ The exponential weighting and bell curve weightings from equations (\ref{eqn:exp
 ![Plot of the weightings of the exponential function (blue) and the Gaussian (blue) against -t/T from 0 to 1.](images/plot_bell_vs_exp.png){#fig:exp_vs_bell_plot fig-align=center}
 
 
-
-%% ==Axis labels -t/T== %%
-
 The inefficiencies of training caused by very early and very late spikes are of a different nature, therefore it would be beneficial to enable the weighting function to be asymmetrical. This would allow scaling early spikes differently to late spikes. To do this I modified the standard Gaussian function, scaling it by $-t/T$, this gave it a distinct shape, rising quickly earlier in the recording, and fading slowly near the end (figure \ref{fig:exp_vs_gaus_plot}). 
 
 \begin{equation}
-$$ V_{gausian\_mod}(t) = a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right)\ V(t) $$
-\label{eqn:gaus_sum_simple}}
+V_{gausian\_mod}(t) = a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right)\ V(t)
+\label{eqn:gaus_sum_simple}
 \end{equation}
 
 
@@ -554,14 +550,12 @@ $$ V_{gausian\_mod}(t) = a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \r
 ![Plot of the weightings of the exponential function (blue) and the Gaussian (blue) against -t/T from 0 to 1.](images/plot_gaus_vs_exp.png){#fig:exp_vs_gaus_plot fig-align=center}
 
 
-%% ==Axis labels -t/T== %%
 
-
- Implementing this modified Gaussian function in the log-softmax form give the new loss function, $\mathcal{L}_{sum\_gaus}$ in equation (\ref{eqn:lif3}). 
+Implementing this modified Gaussian function in the log-softmax form give the new loss function, $\mathcal{L}_{sum\_gaus}$ in equation (\ref{eqn:lif3}). 
 
 \begin{equation}
-$$\mathcal{L}_{sum\_gaus} = -\frac{1}{N_{batch}} \sum^{N_{batch}}_{m=1}log(\frac{exp(\int^{T}_{0} a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0} a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V^{m}_{k}(t) dt)})
-$$\label{eqn:lsumgaus}
+\mathcal{L}_{sum\_gaus} = -\frac{1}{N_{batch}} \sum^{N_{batch}}_{m=1}log(\frac{exp(\int^{T}_{0} a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0} a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V^{m}_{k}(t) dt)})
+\label{eqn:lsumgaus}
 \end{equation}
 
 
@@ -569,27 +563,20 @@ As discussed before, the gradient for each weight is backpropagates by solving f
 
 
 \begin{equation}
-$$
 \tau_{\text{syn}} \tilde{\lambda}_{I,j}^{\prime} = -\tilde{\lambda}_{I,j} + \tilde{\lambda}_{V,j},
-$$
-
 \label{eqn:lambda_ode}
 \end{equation}
 
 
 \begin{equation}
-$$
 \tau_{\text{mem}} \tilde{\lambda}_{V,j}^{\prime} = -\tilde{\lambda}_{V,j} - \sum_n \frac{\partial F}{\partial \left(\int l_V^n dt\right)} \frac{\partial l_V^n}{\partial V_j}
-$$
 \label{eqn:lambda_gradient_ode}
 \end{equation}
 
 \begin{equation}
-$$
-\begin{align*}
+\begin{aligned}
 \frac{d\mathcal{L}_F}{dw_{ji}} &= -\tau_{\text{syn}} \sum_{t \in t_{\text{spike}}(i)} \tilde{\lambda}_{I,j}(t)
-\end{align*}
-$$
+\end{aligned}
 \label{eqn:derivative_of_loss}
 \end{equation}
 
@@ -597,36 +584,34 @@ $$
 Where:
 
 \begin{equation}
-$$
 \tilde{\lambda}_{I,j} := \sum_n \frac{\partial F}{\partial \left(\int l_V^n dt\right)} \lambda_{I,j}^n(t) 
-$$
 \label{eqn:lambda_i_tilde}
 \end{equation}
 
 and
 
 \begin{equation}
-$$
 \tilde{\lambda}_{V,j} := \sum_n \frac{\partial F}{\partial \left(\int l_V^n dt\right)} \lambda_{V,j}^n 
-$$
 \label{eqn:lambda_v_tilde}
 \end{equation}
 
 
 To integrate the new, Gaussian based loss function, $\mathcal{L}_{sum\_gaus}$, into the Eventprop scheme we formulate the gradient of the loss as:
 
-$$
-\begin{align*}
+
+\begin{equation}
+\begin{aligned}
 \frac{d\mathcal{L}}{dw_{ji}} &= \frac{1}{N_{\text{batch}}} \sum_{m=1}^{N_{\text{batch}}} \frac{d}{dw_{ji}} \left( -\log \frac{\exp\left(\int_0^T   a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right)   V_{l(m)}^m(t) dt\right)}{\sum_{k=1}^{N_{\text{out}}} \exp\left(\int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_k^m(t) dt\right)} \right) \\
 &= \frac{1}{N_{\text{batch}}} \sum_{m=1}^{N_{\text{batch}}} \frac{dF^m}{dw_{ji}},
-\end{align*}
-$$
+\end{aligned}
+\end{equation}
 
 Where $F^m$ is the loss of a single trial, $m$, within a batch of trials, $N_{batch}$. Written as a function of the integral of the voltage, $F^m$ becomes:
 
-$$
+
+\begin{equation}
 F^m \left( \int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V(t) dt \right) = -\log \frac{\exp \left( \int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right)  V_{l(m)}^m (t) dt \right)}{\sum_{k=1}^{N_{\text{out}}} \exp \left( \int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_k^m (t) dt \right)}
-$$
+\end{equation}
 
 So that we can use this loss function within the Eventprop adjoint ODE (equations  (\ref{eqn:lambda_ode}) and (\ref{eqn:lambda_gradient_ode})), we need to find the derivative of $F^m$. We first simplify the input to $F^m$ as:
 
@@ -662,22 +647,26 @@ $$
 
 This can be split into two differentials:
 
-$$
-\begin{align*}
+
+\begin{equation}
+\begin{aligned}
 1. \quad & \frac{\partial}{\partial X_n} \left( \log \left( \sum_{k=1}^{N_{\text{out}}} \exp(X_k) \right) \right) \\
 2. \quad & \frac{\partial}{\partial X_n} (-X_{l(m)})
-\end{align*}
-$$
+\end{aligned}
+\end{equation}
+
 To differentiate the first part, let $S = \sum_{k=1}^{N_{\text{out}}} \exp(X_k)$. So the first part becomes $\frac{\partial}{\partial X_n} (\log S)$, and using chain rule:
 
 $$
 \frac{\partial(\log S)}{\partial X_n} = \frac{1}{S} \cdot \frac{\partial S}{\partial X_n} = \frac{1}{S} \cdot \frac{\partial}{\partial X_n} \left( \sum_{k=1}^{N_{\text{out}}} \exp(X_k) \right)
 $$
+
 The partial derivative of the sum with respect to $X_n$ would be non-zero only when $k = n$. So treating the values where $k \neq n$ as constants we simplify $\frac{\partial S}{\partial X_n}$ as:
 
 $$
 \frac{\partial S}{\partial X_n} = \frac{\partial}{\partial X_n} (\exp(X_n)) = \exp(X_n)
 $$
+
 Therefore the first part is:
 
 $$
@@ -687,13 +676,14 @@ $$
 The second part, $\frac{\partial}{\partial X_n} (-X_{l(m)})$, depends on weather $n$ is the same as $l(m)$.
 
 - If $n = l(m)$, then we are differentiating $-X_n$ with respect to $X_n$, which is -1. 
-- - If $n \neq l(m)$, then $X_l{m}$ is treated as a constant with respect to $X_n$, so the derivative is 0. 
+- If $n \neq l(m)$, then $X_l{m}$ is treated as a constant with respect to $X_n$, so the derivative is 0. 
 
 This can be written concisely using the Kronecker delta, $\delta_{n,l(m)}$, which is $1$ if $n = l(m)$ and $0$ if $n \neq l(m)$. So, the second part is:
 
 $$
 \frac{\partial}{\partial X_n} (-\mathbf{X}_{l(m)}) = -\delta_{n,l(m)}.
 $$
+
 Combining these parts we get:
 
 $$
