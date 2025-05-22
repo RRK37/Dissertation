@@ -299,8 +299,13 @@ The highlighted neuron, $\mathbf{h}_{1}$, is connected to all input neurons, $\m
 
 An efficient way to write these weighted summations for all of the neurons in a layer is by using matrix algebra.
 
-$$\mathbf{h} = \mathbf{x}\times \mathbf{W}^{xh}$$
-$$\mathbf{y} = \mathbf{h}\times \mathbf{W}^{hy}$$
+\begin{equation}
+\mathbf{h} = \mathbf{x}\times \mathbf{W}^{xh}
+\end{equation}
+
+\begin{equation}
+\mathbf{y} = \mathbf{h}\times \mathbf{W}^{hy}
+\end{equation}
 
 These two equations encompass all of the weighted summations that define the network. The relationship between the weighted summation equation ( equation \ref{eqn:weighted_sum}) and the matrix multiplication representation of the network is highlighted in figure \ref{fig:matrix_of_network}. You can see that each input neuron $x_i$ is multiplied by the corresponding weight $w_{i,1}$ and summed to give $h_1$. 
 
@@ -391,6 +396,7 @@ Spike-timing-dependent plasticity (STDP) represents a training approach for SNNs
 
 ![The change of synaptic weight plotted against the difference in timing of the pre- and post-synaptic neuron spikes, showing the long term potential and long term depression phenomena.](images/stdp_ltp_ltd.png){#fig:stdp_ltp_ltd fig-align=center}
 
+
 Reward-modulated STDP (R-STDP) extends the basic STDP rule by incorporating a global reward or punishment signal that modulates the synaptic weight changes. This allows the network to learn task-specific features by reinforcing connections that contribute to correct outputs and weakening those associated with errors. R-STDP bridges the gap between unsupervised STDP and supervised learning, enabling SNNs to tackle more complex, goal-oriented tasks like speech recognition. The reward signal in R-STDP can potentially be implemented using neuromodulators, further enhancing the biological plausibility of SNN training.
 
 STDP has been employed to train SNNs for speech recognition, often in conjunction with temporal coding schemes such as time-to-first-spike for efficient processing. It has been used for unsupervised feature extraction from speech signals, with subsequent classification using methods like Hidden Markov Models (HMMs) or tempotrons. STDP-based convolutional SNNs have shown promise in achieving accurate and efficient speech recognition, with performance levels approaching those of traditional ANNs in certain scenarios.
@@ -432,6 +438,41 @@ An adjoint system to the leaky integrate-and-fire (LIF) network has been derived
 
 ![Spikes propagated forward according to LIF neuron dynamics. Error signals are propagated backword according to the adjoint system. $\nu$ ](images/forward_backward_dynamics_evp.png){#fig:eventprop_free_dynamics fig-align=center}
 
+
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{booktabs} % For better horizontal lines
+
+\begin{document}
+
+\begin{table}[h!]
+\centering
+\caption{Model Equations} % Optional: Add a caption to your table
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Free dynamics} & \textbf{Transition condition} & \textbf{Jumps at transition} \\
+\midrule
+\multicolumn{3}{l}{\textbf{Forward:}} \\
+(i) $\tau_{\text{mem}}\dot{V} = -V + I$ & $(V)_n - \vartheta = 0,$ & $(V^+)_n = 0$ \\
+& $(\dot{V})_n \neq 0$ & $I^+ = I^- + W e_n$ \\
+(ii) $\tau_{\text{syn}}\dot{I} = -I$ & & \\
+\midrule
+\multicolumn{3}{l}{\textbf{Backward:}} \\
+(iii) $\tau_{\text{mem}}\lambda'_V = -\lambda_V - \frac{\partial l_V}{\partial V}$ & $t - t_k = 0$ & (v) $(\lambda_V^-)_{n(k)} = (\lambda_V^+)_{n(k)} + \frac{1}{\tau_{\text{mem}}(V^-)_{n(k)} - \vartheta} \left[ \frac{\partial (\lambda_V^+)}{\partial t_k} \right]_{n(k)}$ \\
+& & \qquad $+ (W^T (\lambda_I^+ - \lambda_I))_{n(k)} + I_V^+ - I_V^-$ \\
+(iv) $\tau_{\text{syn}}\lambda'_I = -\lambda_I + \lambda_V$ & & \\
+\midrule
+\multicolumn{3}{@{}l@{}}{\textbf{Gradient of the loss:}(vi) $\frac{dC}{dw_{ij}} = -\tau_{\text{syn}} \sum_{t \in t_{\text{spike}}(i)} \lambda_{I,j}(t)$} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}
+
+
+
+
 Figure \ref{fig:eventprop_free_dynamics} shows the maths for general loss functions; the spike time dependent loss, $l_p$, and the output neuron voltage dependent loss, $l_V$. This allows flexibility in how loss functions are defined, enabling the shaping of loss functions to suit the task. On the SHD dataset, Eventprop has achieved state-of-the-art accuracy by using a loss function based on the membrane voltage of the output neurons [@nowotnyLossShapingEnhances2025]. Initially, researchers tried using a loss function which takes the an integral of the output neuron's membrane voltage over the recording period, $\int^{T}_{0} V(t) dt$. Each neuron corresponds to a word that could have been said in the recording; according to this loss function, the output neuron with the greatest integral of membrane voltage should correspond to the word that was actually said in the recording. The loss function took this integral for each output neuron, and calculated the loss using log-softmax function, as in equation (\ref{eqn:lsum}). 
 
 
@@ -443,6 +484,7 @@ Figure \ref{fig:eventprop_free_dynamics} shows the maths for general loss functi
 This loss function has shown better accuracy than alternatives. One alternative is based on the timing of the first spike - the first spike to arrive at an output neuron determines how the recording is classified. Another alternative classifies the recording based on the max membrane voltage reached in the output neurons. 
 
 While it had the best accuracy, it was found that the learning rate of this sum based loss function, $\mathcal{L}_{sum}$, was very slow. When spikes reach the output neurons, the membrane voltage of the output neuron increases, and then decays based on the membrane time constant, $\tau_{mem}$. However, if spikes reach the output neurons near the end of the trial, the tail-end of the decaying voltage will be cut off, see figure \ref{fig:voltage_cutoff}. Changing the weights between neurons affects the timing of the spikes they generate; a stronger synaptic connection will increase the voltage in the post-synaptic neuron faster, and thus it will reach the threshold voltage quicker. Changing the timing of the spikes occurring near the end of the recording will cause more or less of their area to be cut-off. Therefore, their timing will affect the loss - which is the result of the output neuron membrane voltage integrated over the duration of the trial - far more than earlier spikes. This disproportionate effect that later spikes have on the loss is an arbitrary artifact of the trial duration end, and causes learning to be slower and less efficient.
+
 ![The membrane voltage of an output neuron which receives 2 spikes at the end of the trial. Spike 1 causes the voltage to increase and then decay to 0. Spike 2 increases the voltage, but before the voltage can decay to 0, the trial ends, so the tail end of the decay is cut off.](images/output_neuron_voltage_cutoff.png){#fig:voltage_cutoff fig-align=center}
 
 To improve gradient flow, a weighted sum based loss was proposed and tested, $\mathcal{L}_{sum\_exp}$ in equation (\ref{eqn:lsumexp}). This weights earlier spikes exponentially more than the later spikes according to the $e^{-t/T}$ term. This loss function ended up achieving state-of-the-art accuracy.  
@@ -503,9 +545,6 @@ Why data has been split the way it has.
 
 First I implemented the model used in [@nowotnyLossShapingEnhances2025] to get state-of-the-art performance. The model uses Leaky Integrate-and-Fire neuron model with exponential synapses. It has an input layer of 700 neurons - corresponding to the 700 channels of the cochlea model used by SHD - and 20 output neurons for digits 0 to 9 in English and German. The model has a single hidden layer which has been tested with a size of 64, 128, 256, 512, and 1024. The hidden layer was tested using feed-forward only connections and fully connected recurrent connections, showing best results with a recurrent architecture. 
 
-GRAPHS OF TRAINING 
-GRAPHS OF WEIGHTS CHANGING OVER TIME?
-
 Using the hyper-parameters from [@nowotnyLossShapingEnhances2025] allowed me to reproduce the state-of-the-art accuracy found in literature. 
 
 How are the results classified in literature? 
@@ -535,7 +574,7 @@ The exponential weighting and bell curve weightings from equations (\ref{eqn:exp
  
 
 
-![Plot of the weightings of the exponential function (blue) and the Gaussian (blue) against -t/T from 0 to 1.](images/plot_bell_vs_exp.png){#fig:exp_vs_bell_plot fig-align=center}
+![Plot of the weightings of the exponential function (blue) and the Gaussian (blue) against -t/T from 0 to 1.](images/plot_bell_vs_exp.png){#fig:exp_vs_bell_plot fig-align=center width="300px"}
 
 
 The inefficiencies of training caused by very early and very late spikes are of a different nature, therefore it would be beneficial to enable the weighting function to be asymmetrical. This would allow scaling early spikes differently to late spikes. To do this I modified the standard Gaussian function, scaling it by $-t/T$, this gave it a distinct shape, rising quickly earlier in the recording, and fading slowly near the end (figure \ref{fig:exp_vs_gaus_plot}). 
@@ -547,10 +586,10 @@ V_{gausian\_mod}(t) = a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \righ
 
 
 
-![Plot of the weightings of the exponential function (blue) and the Gaussian (blue) against -t/T from 0 to 1.](images/plot_gaus_vs_exp.png){#fig:exp_vs_gaus_plot fig-align=center}
+![Plot of the weightings of the exponential function (blue) and the Gaussian (blue) against -t/T from 0 to 1.](images/plot_gaus_vs_exp.png){#fig:exp_vs_gaus_plot fig-align=center width="300px"}
 
 
-
+	
 Implementing this modified Gaussian function in the log-softmax form give the new loss function, $\mathcal{L}_{sum\_gaus}$ in equation (\ref{eqn:lif3}). 
 
 \begin{equation}
@@ -616,34 +655,34 @@ F^m \left( \int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right)
 So that we can use this loss function within the Eventprop adjoint ODE (equations  (\ref{eqn:lambda_ode}) and (\ref{eqn:lambda_gradient_ode})), we need to find the derivative of $F^m$. We first simplify the input to $F^m$ as:
 
 
-$$
+\begin{equation}
 X_k = \int^T_0 a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right)\ V^m_k (t)\ dt
-$$
+\end{equation}
 
 Where the integrated output neuron voltage score is $X_k$. Therefore, $X_{l(m)}$ would specifically be the score of the correct output neuron, $l(m)$ for trial $m$. Now we can rewrite $F^m$ as:
 
-$$
+\begin{equation}
 F^m = -\log \frac{\exp \left( X_{l(m)} \right)}{\sum_{k=1}^{N_{\text{out}}} \exp \left( X_k \right)}
-$$
+\end{equation}
 
 Using the property of logarithms $log(a/b) = log(a)-log(b)$, we get:
 
-$$
+\begin{equation}
 F^m = -\log  \left( \exp \left( X_{l(m)} \right) \right) \ + \log \left( exp\sum_{k=1}^{N_{\text{out}}} \exp \left( X_k \right) \right)
-$$
+\end{equation}
 
 Simplifying:
 
-$$
+\begin{equation}
 F^m =  \log \left( exp\sum_{k=1}^{N_{\text{out}}} \exp \left( X_k \right) \right) - X_{l(m)} 
-$$
+\end{equation}
 
 Now we differentiate with respect to $X_n$, where $n$ is an output neuron. 
 
 
-$$
+\begin{equation}
 \frac{\partial F^m}{\partial X_n} = \frac{\partial}{\partial X_n} \left( \log \left( \sum_{k=1}^{N_{\text{out}}} \exp(X_k) \right) - X_{l(m)} \right)
-$$
+\end{equation}
 
 This can be split into two differentials:
 
@@ -657,21 +696,21 @@ This can be split into two differentials:
 
 To differentiate the first part, let $S = \sum_{k=1}^{N_{\text{out}}} \exp(X_k)$. So the first part becomes $\frac{\partial}{\partial X_n} (\log S)$, and using chain rule:
 
-$$
+\begin{equation}
 \frac{\partial(\log S)}{\partial X_n} = \frac{1}{S} \cdot \frac{\partial S}{\partial X_n} = \frac{1}{S} \cdot \frac{\partial}{\partial X_n} \left( \sum_{k=1}^{N_{\text{out}}} \exp(X_k) \right)
-$$
+\end{equation}
 
 The partial derivative of the sum with respect to $X_n$ would be non-zero only when $k = n$. So treating the values where $k \neq n$ as constants we simplify $\frac{\partial S}{\partial X_n}$ as:
 
-$$
+\begin{equation}
 \frac{\partial S}{\partial X_n} = \frac{\partial}{\partial X_n} (\exp(X_n)) = \exp(X_n)
-$$
+\end{equation}
 
 Therefore the first part is:
 
-$$
+\begin{equation}
 \frac{1}{\sum_{k=1}^{N_{\text{out}}} \exp(X_k)} \cdot \exp(X_n) = \frac{\exp(X_n)}{\sum_{k=1}^{N_{\text{out}}} \exp(X_k)}
-$$
+\end{equation}
 
 The second part, $\frac{\partial}{\partial X_n} (-X_{l(m)})$, depends on weather $n$ is the same as $l(m)$.
 
@@ -680,39 +719,39 @@ The second part, $\frac{\partial}{\partial X_n} (-X_{l(m)})$, depends on weather
 
 This can be written concisely using the Kronecker delta, $\delta_{n,l(m)}$, which is $1$ if $n = l(m)$ and $0$ if $n \neq l(m)$. So, the second part is:
 
-$$
+\begin{equation}
 \frac{\partial}{\partial X_n} (-\mathbf{X}_{l(m)}) = -\delta_{n,l(m)}.
-$$
+\end{equation}
 
 Combining these parts we get:
 
-$$
+\begin{equation}
 \frac{\partial F^m}{\partial X_n} = \frac{\exp(X_n)}{\sum_{k=1}^{N_{\text{out}}} \exp(X_k)} - \delta_{n,l(m)} = -\delta_{n,l(m)} + \frac{\exp(X_n)}{\sum_{k=1}^{N_{\text{out}}} \exp(X_k)}
-$$
+\end{equation}
 
 Substituting back the original integral notation:
 
-$$
+\begin{equation}
 \frac{\partial F^m}{\partial \left(\int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_n^m dt\right)} = -\delta_{n,l(m)} + \frac{\exp\left(\int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_n^m dt\right)}{\sum_{k=1}^{N_{\text{out}}} \exp\left(\int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_k^m dt\right)}
-$$
+\end{equation}
 
 
 Therefore, using equations \ref{eqn:lambda_ode}), \ref{eqn:lambda_gradient_ode}), and \ref{eqn:derivative_of_loss}), we can formulate the new Eventprop scheme of the Gaussian based loss function: 
 
 
-$$
+\begin{equation}
 \tau_{\text{syn}} \tilde{\lambda}_{I,j}^{m'} = -\tilde{\lambda}_{I,j}^m + \tilde{\lambda}_{V,j}^m
-$$
+\end{equation}
 
-$$
+\begin{equation}
 \tau_{\text{mem}} \tilde{\lambda}_{V,j}^{m'} = -\tilde{\lambda}_{V,j}^m + \delta_{j,l(m)} - \frac{\exp\left(\int a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_j^m dt\right)}{\sum_{k=1}^{N_{\text{class}}} \exp\left(\int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_k^m dt\right)}
-$$
+\end{equation}
 
 
 
-$$
+\begin{equation}
 \frac{dF^m}{dw_{ji}} = -\tau_{\text{syn}} \sum_{\{t_{\text{spike}}(i)\}} \tilde{\lambda}_{I,j}^m (t_{\text{spike}})
-$$
+\end{equation}
 
 This defines how the adjoint variables, $\lambda_V$ and $\lambda_I$, dynamically evolve, and how the gradient of the loss function, $F^m$, with respect to a weight, $w_{ji}$, is calculated. 
 
@@ -778,3 +817,5 @@ lorem ipsum
 # Project Review
 
 lorem ipsum
+
+
