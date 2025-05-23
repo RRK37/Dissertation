@@ -761,7 +761,7 @@ Figure \ref{fig:gaus_vs_exp_plot}) shows the graph of mean evaluation correct fo
 
 ## Power Usage of GPU and CPU
 
-The figure \ref{fig:time_and_energy_cost}) presents the time and energy consumption per epoch for each setup on a logarithmic scale. The CPU, processing a single batch, was over 10 times slower than the GPU. While the CPU consumed less power, its substantially longer runtime led to greater overall energy usage. Increasing the batch size improved GPU speed up to a batch size of 32, beyond which performance declined.
+The figure \ref{fig:time_and_energy_cost}) presents the time and energy consumption per epoch for each setup on a logarithmic scale. The CPU, processing a single batch, was over 10 times slower than the GPU. While the CPU consumed less power, its substantially longer runtime led to greater overall energy usage. Increasing the batch size improved GPU speed up to a batch size of 32, beyond which performance declined. This data allowed me to optimise training times. 
 
 
 ![Bar graph of the time cost and energy cost for CPU and GPU using different batch sizes. ](images/time_and_energy_cost.png){#fig:time_and_energy_cost fig-align=center width="600px"}
@@ -784,7 +784,6 @@ The effect of these uncertainties on project outcomes is that while the novel lo
 
 Another avenue for exploration is the application of Eventprop and these loss functions to significantly larger SNN models. The current study utilized a model with a single hidden layer of 512 neurons. Eventprop's inherent computational and memory efficiency is documented to allow for scaling to more complex tasks and larger models, a domain that holds potential for further accuracy improvements but has not yet been fully investigated. Testing how both the $\mathcal{L}_{sum\_exp}$​ and the novel ​ $\mathcal{L}_{sum\_gaus}$ perform with deeper or wider architectures, or those incorporating more complex connectivity patterns, is a critical next step. 
 
-Beyond the core investigation into loss functions, the power usage profiling conducted in Section 4.3 (Figure 23) offers practical implications for SNN research and development. The benchmarks comparing CPU (AMD Ryzen 9 5950X) and GPU (Nvidia RTX 4090) performance revealed not only that the GPU was vastly faster but also pinpointed an energy "sweet spot" for the specific GPU used. For the Nvidia RTX 4090, a batch size of 32 yielded the lowest energy consumption per epoch (2.02 kJ), demonstrating that optimal batch sizing is crucial for maximizing energy efficiency. Even though GPUs are often considered power-hungry in terms of their instantaneous draw, these results show they are, in fact, the most energy-efficient means of training these neural networks when considering the total energy required to complete a given amount of training. This superior efficiency and speed dramatically reduce the turnaround time for experiments, making iterative research, complex model development, and extensive hyperparameter searches far more feasible.
 
 
 Despite the uncertainties, the engineering achievement of this project is significant. It successfully progressed from a theoretical critique of an existing SOTA method to the mathematical derivation (Section 3.4), software implementation (Section 3.5, Figure 18), and empirical validation of a novel alternative. The demonstration that thoughtful loss function design can directly and positively influence SNN training dynamics is a valuable contribution. This reinforces the principle that model performance is an interplay of architecture, optimisation, and the precise formulation of the learning objective. The power profiling results (Section 4.3, Figure 23) also provided a practical perspective, underscoring the substantial energy and time efficiencies achievable with GPU acceleration in SNN training workflows.
@@ -794,22 +793,29 @@ Despite the uncertainties, the engineering achievement of this project is signif
 
 # Conclusion
 
+In conclusion this project aimed to explore training of SNNs for speech recognition tasks. The investigation successfully reproduced the SOTA test accuracy of Eventprop on the SHD dataset using the exponentially weighted loss function $\mathcal{L}_{sum\_exp}$, thereby validating the experimental setup. The core contribution was the mathematical derivation and software implementation of a novel Gaussian-based loss function, $\mathcal{L}_{sum\_gaus}$, designed to mitigate the impact of uninformative early spikes and overemphasised late spikes. When evaluated, the novel loss function achieved a test accuracy of 92.9%. While marginally lower than the SOTA benchmark, a key finding was that $\mathcal{L}_{sum\_gaus}$ exhibited a substantially faster initial learning rate. This rapid early convergence supports the hypothesis that the Gaussian weighting effectively directs the network towards salient features more efficiently by reducing the influence of early, noise-driven transients. This characteristic offers practical advantages, including the potential for shorter training durations and decreased computational costs in model development. 
 
+The slight deficit in the final accuracy achieved by $\mathcal{L}_{sum\_gaus}$ compared to $\mathcal{L}_{sum\_exp}$ warrants consideration. This could be attributed to the adoption of hyperparameters optimised for $\mathcal{L}_{sum\_exp}$ and the inherent stochasticity of neural network training. 
 
-
-
-
-
-
-
+In summary, this project successfully developed and validated a novel loss function that demonstrably improves the initial learning speed of SNNs trained with Eventprop. This work contributes to the ongoing effort to create more efficient and robust training methodologies for SNNs, paving the way for their broader application in low-power, real-time speech processing and other temporal machine learning tasks. The engineering achievement of progressing from a theoretical critique to the mathematical derivation, software implementation, and empirical validation of this novel approach is significant, reinforcing the principle that careful design of the learning objective is crucial for advancing neural network performance.
 
 # Project Review
 
+Overall, the project progressed successfully. Despite facing personal challenges and losses during the semester, I am proud of what I was able to accomplish. A key strength was the time dedicated to understanding the mathematical foundations of the EventProp algorithm, which was really fun, and allowed for a deeper grasp of its underlying principles. The recent publication of the paper achieving state-of-the-art accuracy further motivated me, as it presented an opportunity to contribute novel insights. In retrospect, one area for improvement would have been to continuously run experiments to gather more data. Network interruptions posed a setback by causing training sessions to restart; incorporating checkpointing earlier in the process would have mitigated this issue and ensured greater resilience in the training workflow.
+
+
+
+![Kamaji - my dad's GPU.](images/kamaji.jpg){#fig:gpu_father fig-align=center width="400px"}
+
+
+# Acknowledgments 
+
+
+I would like to extend my sincere thanks to my supervisor, Dorian, for his invaluable guidance and support throughout this project. His insights greatly deepened my understanding of spiking neural networks, and I have thoroughly enjoyed our discussions—both about this project and beyond.
+A heartfelt thank you also goes to my father, who generously set up and maintained remote access to a GPU at his home, ensuring stable network conditions and managing the firewall and LAN. His support was instrumental in enabling the computational experiments required for this project.
+Finally, I extend my deepest gratitude to my fiancée for her support throughout this semester, and throughout university. Her patience and understanding — especially during the many long nights of work — have been invaluable, and I am truly grateful for her encouragement every step of the way.
 
 
 
 
-
-
-
-
+![Kamaji - my dad's GPU.](images/kamaji.jpg){#fig:gpu_father fig-align=center width="400px"}
