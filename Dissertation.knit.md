@@ -4,7 +4,7 @@ author:
   - name: Rihards Klotiņš
   - name: "Supervisor: Dorian Florescu"
 abstract: FILLER ABSTRACT IGNORE - Spiking Neural Networks (SNNs), the third generation of neural networks, offer a promising alternative to traditional Artificial Neural Networks (ANNs) due to their energy efficiency, temporal processing capabilities, and potential for neuromorphic hardware implementation. Unlike ANNs, which rely on continuous-valued activations, SNNs process information through discrete spike events, closely mimicking biological neural systems. This characteristic enables them to efficiently handle sequential data, making them suitable for applications such as speech recognition, event-based vision, and edge computing. Training SNNs, however, remains a significant challenge due to the non-differentiability of spike events. While ANN-to-SNN conversion provides a workaround, it imposes computational costs and limits architectural flexibility. Direct training methods, such as Backpropagation-Through-Time (BPTT) with surrogate gradients, local learning rules, and biologically inspired approaches like e-prop and EventProp, have emerged as viable alternatives. Each method presents trade-offs in terms of computational complexity, biological plausibility, and performance. Notably, EventProp has demonstrated state-of-the-art results while reducing memory and computational overhead compared to BPTT. This work explores the theoretical advantages of SNNs, their energy-efficient processing, and recent advancements in training methodologies. It also highlights their potential impact on low-power computing applications, particularly in audio processing, where temporal encoding is crucial. By addressing current limitations and leveraging novel training strategies, SNNs could play a pivotal role in next-generation AI systems.
-date: "`r format(Sys.time(), '%d %B %Y')`"
+date: "23 May 2025"
 url: https://GitHubID.github.io/Repository/
 github-repo: GitHubID/Repository
 lang: en-US
@@ -49,75 +49,9 @@ output:
   bookdown::word_document2: default
 ---
 	
-```{r}
-#| label: DoNotModify
-#| include: false
-### Utilities. Do not modify.
-# Installation of packages if necessary
-install_packages <- function(packages) {
-  install_package <- function(package) {
-    if (!package %in% installed.packages()[, 1]) {
-      install.packages(package, repos = "https://cran.rstudio.com/")
-    }
-  }
-  invisible(sapply(packages, install_package))
-}
-
-# Basic packages
-install_packages(c("bookdown", "formatR", "kableExtra", "ragg"))
-
-# Chunk font size hook: allows size='small' or any valid Latex font size in chunk options
-def.chunk.hook  <- knitr::knit_hooks$get("chunk")
-knitr::knit_hooks$set(chunk = function(x, options) {
-  x <- def.chunk.hook(x, options)
-  ifelse(
-    options$size != "normalsize", 
-    paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"),
-    x
-  )
-})
-```
-
-```{r}
-#| label: Options
-#| include: false
-### Customized options for this document
-# Add necessary packages here
-packages <- c("tidyverse")
-# Install them
-install_packages(packages)
-
-# knitr options
-knitr::opts_chunk$set(
-  cache =   FALSE,    # Cache chunk results
-  include = TRUE,     # Show/Hide chunks
-  echo =    TRUE,     # Show/Hide code
-  warning = FALSE,    # Show/Hide warnings
-  message = FALSE,    # Show/Hide messages
-  # Figure alignment and size
-  fig.align = 'center', out.width = '80%',
-  # Graphic devices (ragg_png is better than standard png)
-  dev = c("ragg_png", "pdf"),
-  # Code chunk format
-  tidy = TRUE, tidy.opts = list(blank = 
-                                  FALSE, width.cutoff = 50),
-  size = "scriptsize", knitr.graphics.auto_pdf = TRUE
-  )
-options(width = 50)
-
-# ggplot style
-library("tidyverse")
-theme_set(theme_bw())
-theme_update(
-  panel.background = element_rect(fill = "transparent", colour = NA),
-  plot.background = element_rect(fill = "transparent", colour = NA)
-)
-knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
 
 
-# Random seed
-set.seed(973)
-```
+
 
 # Introduction
 
