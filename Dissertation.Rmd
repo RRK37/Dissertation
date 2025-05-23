@@ -519,7 +519,7 @@ The exponential weighting and bell curve weightings from equations (\ref{eqn:exp
  
 
 
-![Plot of the weightings of the exponential function (red) and the bell curve function (blue) against -t/T from 0 to 1.](images/plot_bell_vs_exp.png){#fig:exp_vs_bell_plot fig-align=center width="500px"}
+![Plot of the weightings of the exponential function (red) and the bell curve function (blue) against -t/T from 0 to 1.](images/plot_bell_vs_exp.png){#fig:exp_vs_bell_plot fig-align=center width="300px"}
 
 
 The inefficiencies of training caused by very early and very late spikes are of a different nature, therefore it would be beneficial to enable the weighting function to be asymmetrical. This would allow scaling early spikes differently to late spikes. To do this I modified the standard Gaussian function, scaling it by $-t/T$, this gave it a distinct shape, rising quickly earlier in the recording, and fading slowly near the end (figure \ref{fig:exp_vs_gaus_plot}). 
@@ -531,7 +531,7 @@ V_{gausian\_mod}(t) = a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \righ
 
 
 
-![Plot of the weightings of the exponential function (red) and the Gaussian based function (green) against -t/T from 0 to 1.](images/plot_gaus_vs_exp.png){#fig:exp_vs_gaus_plot fig-align=center width="500px"}
+![Plot of the weightings of the exponential function (red) and the Gaussian based function (green) against -t/T from 0 to 1.](images/plot_gaus_vs_exp.png){#fig:exp_vs_gaus_plot fig-align=center width="300px"}
 
 
 	
