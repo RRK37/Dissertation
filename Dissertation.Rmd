@@ -13,6 +13,7 @@ otherlangs:
   - it
 bibliography: references.bib
 biblio-style: IEEEtran
+mainfont: "Arial" # Replace with your desired main font
 preamble: |
   \hyphenation{bio-di-ver-si-ty sap-lings}
 pdftoc: true
@@ -118,7 +119,7 @@ Artificial Neural Networks (ANN) are computational models inspired by the brain;
 
 A graphics processing unit (GPU) running a large language model (LLM) consumes hundreds of watts of power. On the other hand, the human brain - which perceives the world through visual recognition, guides actions through motor control, keeps involuntary biological systems functioning, weaves together natural language to convey meaning, and gives rise to the phenomenon of consciousness - consumes only about 20 watts. Such efficient information processing has motivated research into neuromorphic computing - a field aiming to emulate the brain’s neural architecture. This goal sparked the creation of Spiking Neural Networks (SNNs) which are considered the third generation of neural network models [@maassNetworksSpikingNeurons1997], following the second generation of neural networks commonly referred to as artificial neural networks (ANNs). Compared to neurons in ANNs, SNN neurons more closely model how biological neurons behave in the brain. For a second generation neuron, the output is a weighted sum of the inputs passed through an activation function (see figure \ref{fig:second_vs_third_gen} (a)). For a third generation neuron, the output is a spike, sometimes referred to as an "event", which occurs when the voltage of a neuron surpasses a threshold (see figure \ref{fig:second_vs_third_gen} (b)), this results in neurons communicating with each other via trains of spikes, which vary in timing and frequency. Since information is encoded in the timing of outputs, SNNs can inherently capture temporal patterns, making them capable of processing tasks involving time-dependent signals, such as speech recognition, sensory processing, and event-based data streams. Moreover, it has been shown theoretically that SNNs posses higher computational power than the previous generation of ANNs [@maassComputationalPowerCircuits2004]. Spiking neurons do not require a clock signal, moreover they are inactive most of the time, only activating when they receive a spike; these features allow for significant power savings. For instance, the leading neuromorphic platform TrueNorth is capable of simulating a million spiking neurons in real-time while consuming 63 mW. The equivalent network executed on a high-performance computing platform was 100–200× slower than real-time and consumed 100,000 to 300,000× more energy per synaptic event [@merollaMillionSpikingneuronIntegrated2014]. Such power savings are highly sought after for edge computing devices that run on battery or have limited power budgets - like drones, smartphones, wearables. Moreover, their low-latency could see them applied to autonomous vehicles and robotics.
 
-![(a) Shows a 2nd generation neuron. (b) Shows a 3rd generation neuron.](images/second_vs_third_gen_neuron.png){#fig:second_vs_third_gen fig-align=center}
+![(a) Shows a 2nd generation neuron. (b) Shows a 3rd generation neuron.](images/ann_vs_snn_neuron_model_diagra.png){#fig:second_vs_third_gen fig-align=center}
 
 
 ## The Problem to Solve
@@ -764,7 +765,7 @@ The figure \ref{fig:time_and_energy_cost}) presents the time and energy consumpt
 
 This project addressed the challenge of training Spiking Neural Networks (SNNs) for speech recognition, with a focus on the EventProp algorithm - a promising approach for learning in temporal spiking domains. In the initial phase, I successfully reproduced state-of-the-art performance on the Spiking Heidelberg Digits (SHD) dataset, achieving a test accuracy of 93.3% using the established exponentially weighted loss function ($L_{sum\_exp}$). This result serves to validate both the experimental framework and the implementation, establishing a reliable benchmark for assessing subsequent methodological contributions.
 
-The central focus of this investigation was to address a hypothesized sub-optimality in the $\mathcal{L}_{sum\_exp}$ loss function. Specifically, it was posited that the exponential weighting scheme disproportionately amplified noise arising from early, potentially uninformative spikes at the beginning of input sequences. To mitigate this effect, a novel Gaussian-based loss function, $L_{sum\gaus}$​, was mathematically derived and implemented. This formulation attenuates the influence of both early and late spikes, thereby concentrating the learning signal on temporally central segments of the input, which are assumed to be more informative for speech recognition.
+The central focus of this investigation was to address a hypothesized sub-optimality in the $\mathcal{L}_{sum\_exp}$ loss function. Specifically, it was posited that the exponential weighting scheme disproportionately amplified noise arising from early, potentially uninformative spikes at the beginning of input sequences. To mitigate this effect, a novel Gaussian-based loss function, $L_{sum\_gaus}$​, was mathematically derived and implemented. This formulation attenuates the influence of both early and late spikes, thereby concentrating the learning signal on temporally central segments of the input, which are assumed to be more informative for speech recognition.
 
 The application of the $\mathcal{L}_{sum\_gaus}$ loss function resulted in a peak test accuracy of 92.8%. Although this is marginally lower than the 93.3% achieved using $\mathcal{L}_{sum\_exp}$, it remains within the error bounds of the state-of-the-art benchmark. Notably, $\mathcal{L}_{sum\_gaus}$ exhibited a substantially faster initial learning rate, as shown in Figure 22. This rapid early convergence suggests that the Gaussian weighting effectively directed the network toward salient features more efficiently—supporting the hypothesis that it reduces the influence of early, noise-driven transients. In practical terms, the improved learning rate offers the potential for shorter training durations and decreased computational cost, providing a meaningful advantage in iterative model development and hyperparameter tuning.
 
@@ -797,4 +798,12 @@ Despite the uncertainties, the engineering achievement of this project is signif
 
 
 # Project Review
+
+
+
+
+
+
+
+
 
