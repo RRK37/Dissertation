@@ -32,4 +32,6 @@
 \contentsline {subsection}{\numberline {4.3}Power Usage of GPU and CPU}{30}{subsection.4.3}%
 \contentsline {section}{\numberline {5}Discussion}{30}{section.5}%
 \contentsline {section}{\numberline {6}Conclusion}{31}{section.6}%
+\contentsline {section}{\numberline {7}Project Review}{32}{section.7}%
+\contentsline {section}{\numberline {8}Acknowledgments}{32}{section.8}%
 \xpginauxfilefalse 
