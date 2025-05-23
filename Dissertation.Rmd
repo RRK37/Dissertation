@@ -13,6 +13,7 @@ otherlangs:
   - it
 bibliography: references.bib
 biblio-style: IEEEtran
+mainfont: "Arial" # Replace with your desired main font
 preamble: |
   \hyphenation{bio-di-ver-si-ty sap-lings}
 pdftoc: true
@@ -764,7 +765,7 @@ The figure \ref{fig:time_and_energy_cost}) presents the time and energy consumpt
 
 This project addressed the challenge of training Spiking Neural Networks (SNNs) for speech recognition, with a focus on the EventProp algorithm - a promising approach for learning in temporal spiking domains. In the initial phase, I successfully reproduced state-of-the-art performance on the Spiking Heidelberg Digits (SHD) dataset, achieving a test accuracy of 93.3% using the established exponentially weighted loss function ($L_{sum\_exp}$). This result serves to validate both the experimental framework and the implementation, establishing a reliable benchmark for assessing subsequent methodological contributions.
 
-The central focus of this investigation was to address a hypothesized sub-optimality in the $\mathcal{L}_{sum\_exp}$ loss function. Specifically, it was posited that the exponential weighting scheme disproportionately amplified noise arising from early, potentially uninformative spikes at the beginning of input sequences. To mitigate this effect, a novel Gaussian-based loss function, $L_{sum\gaus}$​, was mathematically derived and implemented. This formulation attenuates the influence of both early and late spikes, thereby concentrating the learning signal on temporally central segments of the input, which are assumed to be more informative for speech recognition.
+The central focus of this investigation was to address a hypothesized sub-optimality in the $\mathcal{L}_{sum\_exp}$ loss function. Specifically, it was posited that the exponential weighting scheme disproportionately amplified noise arising from early, potentially uninformative spikes at the beginning of input sequences. To mitigate this effect, a novel Gaussian-based loss function, $L_{sum\_gaus}$​, was mathematically derived and implemented. This formulation attenuates the influence of both early and late spikes, thereby concentrating the learning signal on temporally central segments of the input, which are assumed to be more informative for speech recognition.
 
 The application of the $\mathcal{L}_{sum\_gaus}$ loss function resulted in a peak test accuracy of 92.8%. Although this is marginally lower than the 93.3% achieved using $\mathcal{L}_{sum\_exp}$, it remains within the error bounds of the state-of-the-art benchmark. Notably, $\mathcal{L}_{sum\_gaus}$ exhibited a substantially faster initial learning rate, as shown in Figure 22. This rapid early convergence suggests that the Gaussian weighting effectively directed the network toward salient features more efficiently—supporting the hypothesis that it reduces the influence of early, noise-driven transients. In practical terms, the improved learning rate offers the potential for shorter training durations and decreased computational cost, providing a meaningful advantage in iterative model development and hyperparameter tuning.
 
@@ -797,4 +798,12 @@ Despite the uncertainties, the engineering achievement of this project is signif
 
 
 # Project Review
+
+
+
+
+
+
+
+
 
