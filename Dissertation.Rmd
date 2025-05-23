@@ -739,51 +739,62 @@ Figrue shows the evaluation correct rate for training of the network running for
 
 ## New Loss Function Improves Training
 
-Figure shows the training of the new loss function, $\mathcal{L}_{sum\_gaus}$. It too reaches a maximum value of 91.5% during the 300 epochs of training. During the test it reached a slightly lower 92.9%. 
+Figure \ref{fig:result_of_gaus_simple}) shows the training of the new loss function, $\mathcal{L}_{sum\_gaus}$. It too reaches a maximum value of 91.5% during the 300 epochs of training. During the test it reached a slightly lower 92.9%. 
 
 
 ![Evaluation correctness vs epoch number, Gaussian weighting loss function. Red arrow shows maximum value reached.](images/result_of_gaus_simple.png){#fig:result_of_gaus_simple fig-align=center }
 
 
-Figure shows the graph of mean evaluation correct for the first 100 epochs for the Gaussian based loss function end the exponential based loss function, ran 5 times each. It can be seen that the Gaussian learning rate is much faster in the beginning. 
+Figure \ref{fig:gaus_vs_exp_plot}) shows the graph of mean evaluation correct for the first 100 epochs for the Gaussian based loss function end the exponential based loss function, ran 5 times each. It can be seen that the Gaussian learning rate is much faster in the beginning. 
 
 
-![Plot of the mean correct evaluation accuracy per epoch of the Gaussian based sum loss (red) and the exponential sum loss (blue), over 5 runs each.](images/training_performance_comparison_100.png){#fig:code_of_evp fig-align=center width="600px"}
+![Plot of the mean correct evaluation accuracy per epoch of the Gaussian based sum loss (red) and the exponential sum loss (blue), over 5 runs each.](images/training_performance_comparison_100.png){#fig:gaus_vs_exp_plot fig-align=center width="600px"}
 
 
 
 ## Power Usage of GPU and CPU
 
-The figure shows the time and energy consumption per epoch for each setup, plotted on a logarithmic scale. The CPU, running a single batch, was over 10 times slower than the GPU. Although the CPU consumed less power, the significantly longer runtime resulted in higher overall energy usage.
+The figure \ref{fig:time_and_energy_cost}) presents the time and energy consumption per epoch for each setup on a logarithmic scale. The CPU, processing a single batch, was over 10 times slower than the GPU. While the CPU consumed less power, its substantially longer runtime led to greater overall energy usage. Increasing the batch size improved GPU speed up to a batch size of 32, beyond which performance declined.
 
 
-![Plot of the mean correct evaluation accuracy per epoch of the Gaussian based sum loss (red) and the exponential sum loss (blue), over 5 runs each.](images/time_and_energy_cost.png){#fig:time_and_energy_cost fig-align=center width="600px"}
+![Bar graph of the time cost and energy cost for CPU and GPU using different batch sizes. ](images/time_and_energy_cost.png){#fig:time_and_energy_cost fig-align=center width="600px"}
 
 
 # Discussion
 
-You can get really good accuracy training 
+This project addressed the challenge of training Spiking Neural Networks (SNNs) for speech recognition, with a focus on the EventProp algorithm - a promising approach for learning in temporal spiking domains. In the initial phase, I successfully reproduced state-of-the-art performance on the Spiking Heidelberg Digits (SHD) dataset, achieving a test accuracy of 93.3% using the established exponentially weighted loss function ($L_{sum\_exp}$). This result serves to validate both the experimental framework and the implementation, establishing a reliable benchmark for assessing subsequent methodological contributions.
 
-Cool, shows importance of finding the correct loss function.
+The central focus of this investigation was to address a hypothesized sub-optimality in the $\mathcal{L}_{sum\_exp}$ loss function. Specifically, it was posited that the exponential weighting scheme disproportionately amplified noise arising from early, potentially uninformative spikes at the beginning of input sequences. To mitigate this effect, a novel Gaussian-based loss function, $L_{sum\gaus}$​, was mathematically derived and implemented. This formulation attenuates the influence of both early and late spikes, thereby concentrating the learning signal on temporally central segments of the input, which are assumed to be more informative for speech recognition.
 
-Could there be another function which knows when to listen to the output spike?
+The application of the $\mathcal{L}_{sum\_gaus}$ loss function resulted in a peak test accuracy of 92.8%. Although this is marginally lower than the 93.3% achieved using $\mathcal{L}_{sum\_exp}$, it remains within the error bounds of the state-of-the-art benchmark. Notably, $\mathcal{L}_{sum\_gaus}$ exhibited a substantially faster initial learning rate, as shown in Figure 22. This rapid early convergence suggests that the Gaussian weighting effectively directed the network toward salient features more efficiently—supporting the hypothesis that it reduces the influence of early, noise-driven transients. In practical terms, the improved learning rate offers the potential for shorter training durations and decreased computational cost, providing a meaningful advantage in iterative model development and hyperparameter tuning.
+
+Though slight, the deficit in the final accuracy warrants careful consideration. The factors, including uncertainties and incompleteness in the current work, which could contribute to this observation:
+
+- Hyperparameter optimisation. The hyperparameters, including those defining the network learning rate, and neuron dynamics, were systematically optimised for the $\mathcal{L}_{sum\_gaus}$ loss function [@nowotnyLossShapingEnhances2025]. For the training of $\mathcal{L}_{sum\_gaus}$​ this established hyperparameter set was adopted without modification. Therefore the full potential of $\mathcal{L}_{sum\_gaus}$ may only be realised after a dedicated and systematic hyperparameter optimisation. This was beyond the scope of this project, but offers routes for future research. 
+- Inherent stochasticity. Neural network training is subject to inherent randomness. While the learning rate comparison was averaged over five runs, the final SOTA comparison was based on a single extended run for each loss function. The 0.5% difference in peak accuracy is relatively small and could, to some extent, be influenced by this stochasticity. More extensive runs would be needed to establish the statistical significance of this minor difference with greater confidence.
+
+The effect of these uncertainties on project outcomes is that while the novel loss function has demonstrated a clear advantage in learning speed, its capacity to achieve or surpass existing SOTA accuracy on the SHD dataset remains an incompletely answered question, primarily due to the limited hyperparameter exploration
+
+Another avenue for exploration is the application of Eventprop and these loss functions to significantly larger SNN models. The current study utilized a model with a single hidden layer of 512 neurons. Eventprop's inherent computational and memory efficiency is documented to allow for scaling to more complex tasks and larger models, a domain that holds potential for further accuracy improvements but has not yet been fully investigated. Testing how both the $\mathcal{L}_{sum\_exp}$​ and the novel ​ $\mathcal{L}_{sum\_gaus}$ perform with deeper or wider architectures, or those incorporating more complex connectivity patterns, is a critical next step. 
+
+Beyond the core investigation into loss functions, the power usage profiling conducted in Section 4.3 (Figure 23) offers practical implications for SNN research and development. The benchmarks comparing CPU (AMD Ryzen 9 5950X) and GPU (Nvidia RTX 4090) performance revealed not only that the GPU was vastly faster but also pinpointed an energy "sweet spot" for the specific GPU used. For the Nvidia RTX 4090, a batch size of 32 yielded the lowest energy consumption per epoch (2.02 kJ), demonstrating that optimal batch sizing is crucial for maximizing energy efficiency. Even though GPUs are often considered power-hungry in terms of their instantaneous draw, these results show they are, in fact, the most energy-efficient means of training these neural networks when considering the total energy required to complete a given amount of training. This superior efficiency and speed dramatically reduce the turnaround time for experiments, making iterative research, complex model development, and extensive hyperparameter searches far more feasible.
 
 
+Despite the uncertainties, the engineering achievement of this project is significant. It successfully progressed from a theoretical critique of an existing SOTA method to the mathematical derivation (Section 3.4), software implementation (Section 3.5, Figure 18), and empirical validation of a novel alternative. The demonstration that thoughtful loss function design can directly and positively influence SNN training dynamics is a valuable contribution. This reinforces the principle that model performance is an interplay of architecture, optimisation, and the precise formulation of the learning objective. The power profiling results (Section 4.3, Figure 23) also provided a practical perspective, underscoring the substantial energy and time efficiencies achievable with GPU acceleration in SNN training workflows.
 
-Eventprop Training for larger models.
 
-Significance of increased learning rate
-
-Learnable delays for Eventprop.
-
-lorem ipsum
 
 
 # Conclusion
 
-lorem ipsum
+
+
+
+
+
+
+
+
 
 # Project Review
-
-lorem ipsum
 
