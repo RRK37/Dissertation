@@ -16,6 +16,12 @@ biblio-style: IEEEtran
 mainfont: "Arial" # Replace with your desired main font
 preamble: |
   \hyphenation{bio-di-ver-si-ty sap-lings}
+  \usepackage{nomencl}
+  \makenomenclature
+  \renewcommand{\nomname}{Nomenclature}
+  \RequirePackage{ifthen}
+#preamble: |
+#  \hyphenation{bio-di-ver-si-ty sap-lings}
 pdftoc: true
 toc-depth: 3
 urlcolor: blue

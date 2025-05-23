@@ -14,11 +14,11 @@
 \contentsline {subsubsection}{\numberline {2.2.1}Backpropagation}{11}{subsubsection.2.2.1}%
 \contentsline {subsubsection}{\numberline {2.2.2}ANN-to-SNN Conversion}{14}{subsubsection.2.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.3}Backpropagation-Through-Time}{14}{subsubsection.2.2.3}%
-\contentsline {paragraph}{Parallelisable LIF}{15}{section*.12}%
+\contentsline {paragraph}{Parallelisable LIF}{15}{section*.13}%
 \contentsline {subsubsection}{\numberline {2.2.4}Eligibility Propagation}{15}{subsubsection.2.2.4}%
 \contentsline {subsubsection}{\numberline {2.2.5}Spike-Time-Dependent-Plasticity}{16}{subsubsection.2.2.5}%
 \contentsline {subsubsection}{\numberline {2.2.6}Eventprop}{17}{subsubsection.2.2.6}%
-\contentsline {paragraph}{Mathematics of Eventprop}{18}{section*.15}%
+\contentsline {paragraph}{Mathematics of Eventprop}{18}{section*.16}%
 \contentsline {section}{\numberline {3}Methods}{20}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Dataset used}{20}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Software Libraries}{21}{subsection.3.2}%
