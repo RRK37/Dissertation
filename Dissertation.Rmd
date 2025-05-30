@@ -545,7 +545,21 @@ V_{gausian\_mod}(t) = a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \righ
 Implementing this modified Gaussian function in the log-softmax form give the new loss function, $\mathcal{L}_{sum\_gaus}$ in equation (\ref{eqn:lif3}). 
 
 \begin{equation}
-\mathcal{L}_{sum\_gaus} = -\frac{1}{N_{batch}} \sum^{N_{batch}}_{m=1}log \frac{exp(\int^{T}_{0} a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0} a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V^{m}_{k}(t) dt)}
+
+
+
+
+
+$$
+\mathcal{L}_{sum\_gaus} = -\frac{1}{N_{batch}} \sum^{N_{batch}}_{m=1}log \frac{exp(\int^{T}_{0} \left( a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) \right) V^{m}_{l(m)}(t) dt )}{\sum^{N_{out}}_{k=1}exp(\int^{T}_{0} \left( a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) \right) V^{m}_{k}(t) dt)}
+$$
+
+
+
+
+
+
+
 \label{eqn:lsumgaus}
 \end{equation}
 
@@ -591,10 +605,10 @@ To integrate the new, Gaussian based loss function, $\mathcal{L}_{sum\_gaus}$, i
 
 
 \begin{equation}
-\begin{aligned}
-\frac{d\mathcal{L}}{dw_{ji}} &= \frac{1}{N_{\text{batch}}} \sum_{m=1}^{N_{\text{batch}}} \frac{d}{dw_{ji}} \left( -\log \frac{\exp\left(\int_0^T   a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right)   V_{l(m)}^m(t) dt\right)}{\sum_{k=1}^{N_{\text{out}}} \exp\left(\int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_k^m(t) dt\right)} \right) \\
-&= \frac{1}{N_{\text{batch}}} \sum_{m=1}^{N_{\text{batch}}} \frac{dF^m}{dw_{ji}},
-\end{aligned}
+\begin{aligned}$$
+\frac{d\mathcal{L}}{dw_{ji}} = \frac{1}{N_{\text{batch}}} \sum_{m=1}^{N_{\text{batch}}} \frac{d}{dw_{ji}} \left( -\log \frac{\exp\left(\int_0^T   a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right)   V_{l(m)}^m(t) dt\right)}{\sum_{k=1}^{N_{\text{out}}} \exp\left(\int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_k^m(t) dt\right)} \right) \\
+= \frac{1}{N_{\text{batch}}} \sum_{m=1}^{N_{\text{batch}}} \frac{dF^m}{dw_{ji}},
+$$\end{aligned}
 \end{equation}
 
 Where $F^m$ is the loss of a single trial, $m$, within a batch of trials, $N_{batch}$. Written as a function of the integral of the voltage, $F^m$ becomes:
@@ -696,9 +710,8 @@ Therefore, using equations \ref{eqn:lambda_ode}), \ref{eqn:lambda_gradient_ode})
 \end{equation}
 
 \begin{equation}
-\tau_{\text{mem}} \tilde{\lambda}_{V,j}^{m'} = -\tilde{\lambda}_{V,j}^m + \delta_{j,l(m)} - \frac{\exp\left(\int a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_j^m dt\right)}{\sum_{k=1}^{N_{\text{class}}} \exp\left(\int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_k^m dt\right)}
+\tau_{\text{mem}} \tilde{\lambda}_{V,j}^{m'} = -\tilde{\lambda}_{V,j}^m + \delta_{j,l(m)} - \frac{\exp\left(\int a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_j^m dt\right)}{\sum_{k=1}^{N_{\text{class}}} \exp\left(\int_0^T a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) V_k^m dt\right)} \left( a - b\frac{t}{T} exp \left( \frac{- (t/T)^2}{2c^2 }  \right) \right) 
 \end{equation}
-
 
 
 \begin{equation}
